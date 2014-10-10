@@ -67,12 +67,12 @@
             <!-- Default panel contents -->
             <div class="panel-heading">Simulator</div>
             <div class="panel-body">
-              <p><strong>Team:</strong> <span id="simTeamName">The mother huggers</span></p>
+              <p><strong>Team:</strong> <span id="simTeamName"></span></p>
               <div class="text-center">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-primary">Cue</button>
-                  <button type="button" class="btn btn-info">View details</button>
-                  <button type="button" class="btn btn-danger">Disembark</button>
+                  <button type="button" class="btn btn-primary simBTNCue simRoomBTN">Cue</button>
+                  <button type="button" class="btn btn-info simBTNView simRoomBTN">View details</button>
+                  <button type="button" class="btn btn-danger simBTNDisembark simRoomBTN">Disembark</button>
                 </div>
               </div>
             </div>
@@ -83,12 +83,12 @@
             <!-- Default panel contents -->
             <div class="panel-heading">Briefing Room</div>
             <div class="panel-body">
-              <p><strong>Team:</strong> <span id="briefTeamName">Russ and his merry men</span></p>
+              <p><strong>Team:</strong> <span id="briefTeamName"></span></p>
               <div class="text-center">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-primary">Cue</button>
-                  <button type="button" class="btn btn-info">View details</button>
-                  <button type="button" class="btn btn-success" disabled="disabled">Embark</button>
+                  <button type="button" class="btn btn-primary briefBTNCue briefRoomBTN">Cue</button>
+                  <button type="button" class="btn btn-info briefBTNView briefRoomBTN">View details</button>
+                  <button type="button" class="btn btn-success briefBTNEmbark briefRoomBTN">Embark</button>
                 </div>
               </div>
             </div>
@@ -199,9 +199,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
 
     <script id="rowTemplate" type="x-handlebars-template">
-    {{#each teams}}
-    {{#if status}}
-    {{else}}
                 <tr id="row-{{ teamID }}" class="cueRow">
                   <td>{{ teamName }}</td>
                   <td>{{ pilotName }}</td>
@@ -212,7 +209,7 @@
                   <td style="text-align: right;">
                     <!-- Split button -->
                     <div class="btn-group" style="width:75px;">
-                      <button type="button" class="btn btn-primary btn-sm" disabled="disabled">Brief</button>
+                      <button type="button" class="btn btn-primary btn-sm briefBTN">Brief</button>
                       <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
@@ -228,8 +225,6 @@
                     </div>
                   </td>
                 </tr>
-    {{/if}}
-    {{/each}}
     </script>
 
     <script type="text/javascript">
@@ -254,13 +249,13 @@
        var theTemplateScript = $("#rowTemplate").html();  
       var theTemplate = Handlebars.compile (theTemplateScript);  
 
-      $('#cueRows').append(theTemplate ({
-        teams: [{
+      var testTeams = [
+        {
           teamID: "k2uynl43hb",
           teamName: "The trolls",
           pilotName: "Timmy",
-          tacticalName: "bob",
-          engineerName: "willy",
+          tacticalName: "Bob",
+          engineerName: "Willy",
           contactNumber: "07733223902",
           bookingTime: "10/10 09:44",
           status: 0
@@ -268,37 +263,33 @@
         {
           teamID: "9ffndlkwb7",
           teamName: "The knobs",
-          pilotName: "knob",
-          tacticalName: "knobby",
-          engineerName: "eric",
+          pilotName: "Knob",
+          tacticalName: "Knobby",
+          engineerName: "Eric",
           contactNumber: "09955432850",
           bookingTime: "10/10 14:32",
-          status: 0
+          status: 1
         },
         {
           teamID: "jiooo49f1m",
           teamName: "Nexus",
-          pilotName: "pete",
-          tacticalName: "patter",
-          engineerName: "randy",
+          pilotName: "Pete",
+          tacticalName: "Patter",
+          engineerName: "Randy",
           contactNumber: "0123456789",
           bookingTime: "10/10 14:59",
-          status: 1
-        }]
-      }));
-
-      $('#cueRows').prepend(theTemplate ({
-        teams: [{
+          status: 0
+        },
+        {
           teamID: "55huzpz2gr",
           teamName: "Prepended Team",
           pilotName: "Henry",
           tacticalName: "Thomas",
           engineerName: "Phil",
           contactNumber: "07700023902",
-          bookingTime: "10/10 08:14",
+          bookingTime: "10/10 15:14",
           status: 0
-        }]
-      }));
+        }];
 
       function addToCue(team, prepend){
         // Add team data to new row, pre/append as requested  
@@ -307,10 +298,13 @@
 
         // Pre or append to list
         if(prepend){
-          $('#cueRows').prepend(rowTemplate(team);
+          $('#cueRows').prepend(rowTemplate(team));
         }
         else{
-          $('#cueRows').append(rowTemplate(team);
+          $('#cueRows').append(rowTemplate(team));
+        }
+        if($('#briefTeamName').html()!=''){
+          $('.briefBTN').prop('disabled', true);
         }
       }
 
@@ -327,21 +321,43 @@
       function addToBrief(team){
         // Set the passed team's name within the span id=briefTeamName
         $('#briefTeamName').html(team.teamName);
+        $('.briefBTN').prop('disabled', true);
+        $('.briefBTNCue').prop('disabled', false);
+        $('.briefBTNView').prop('disabled', false);
+        if($('#simTeamName').html()==''){
+          $('.briefBTNEmbark').prop('disabled', false);
+        }
+        else {
+          $('.briefBTNEmbark').prop('disabled', true);
+        }
       }
 
       function clearBrief(){
         // Clear the team name within the span id=briefTeamName
         $('#briefTeamName').html('');
+        $('.briefBTN').prop('disabled', false);
+        $('.briefRoomBTN').prop('disabled', true);
       }
 
       function addToSim(team){
         // Set the passed team's name within the span id=simTeamName
         $('#simTeamName').html(team.teamName);
+        $('.simRoomBTN').prop('disabled', false);
+        if($('#briefTeamName').html()!=''){
+          $('.briefBTNEmbark').prop('disabled', true);
+        }
       }
 
       function clearSim(){
         // Clear the team name within the span id=simTeamName
         $('#simTeamName').html('');
+        $('.simRoomBTN').prop('disabled', true);
+        if($('#briefTeamName').html()==''){
+          $('.briefBTNEmbark').prop('disabled', true);
+        }
+        else {
+          $('.briefBTNEmbark').prop('disabled', false);
+        }
       }
 
       function clearPage(){
@@ -352,8 +368,36 @@
 
       function processTeam(teams){
         // Itterate over all passed teams and pass on to correct runctions for placement on page
-        
+        for(var i = 0; i<teams.length; i++){
+          if(teams[i].status == 0) addToCue(teams[i]);
+          else if(teams[i].status == 1) addToBrief(teams[i]);
+          else if(teams[i].status == 2) addToSim(teams[i]);
+        }
       }
+
+      clearPage();
+      /*processTeam(testTeams);
+      clearBrief();
+      addToCue({
+          teamID: "k5nbssj90l",
+          teamName: "Bronies",
+          pilotName: "Timmy",
+          tacticalName: "Nick",
+          engineerName: "Loppy",
+          contactNumber: "012853389",
+          bookingTime: "10/10 19:29",
+          status: 0
+        });
+      removeFromCue({
+          teamID: "k2uynl43hb",
+          teamName: "The trolls",
+          pilotName: "Timmy",
+          tacticalName: "Bob",
+          engineerName: "Willy",
+          contactNumber: "07733223902",
+          bookingTime: "10/10 09:44",
+          status: 4
+        });*/
     });
     </script>
   </body>
