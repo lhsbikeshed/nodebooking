@@ -113,59 +113,7 @@
                   <th></th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>Great team</td>
-                  <td>Tom</td>
-                  <td>Tim</td>
-                  <td>Charles</td>
-                  <td>07733223902</td>
-                  <td>08/10 10:45</td>
-                  <td style="text-align: right;">
-                    <!-- Split button -->
-                    <div class="btn-group" style="width:75px;">
-                      <button type="button" class="btn btn-primary btn-sm" disabled="disabled">Brief</button>
-                      <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                        <span class="caret"></span>
-                        <span class="sr-only">Toggle Dropdown</span>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                        <li><a href="#"><span class="glyphicon glyphicon-print"></span>&nbsp; Print Ticket</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; Automated Call</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-earphone"></span>&nbsp; Patch Call</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Team</a></li>
-                        <li class="divider"></li>
-                        <li class="bg-danger"><a href="#"><span class="glyphicon glyphicon-remove"></span>&nbsp; Remove Team</a></li>
-                      </ul>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>AMAZING team</td>
-                  <td>Dick</td>
-                  <td>Dom</td>
-                  <td>Diddles</td>
-                  <td>07735523902</td>
-                  <td>08/10 10:55</td>
-                  <td style="text-align: right;">
-                    <!-- Split button -->
-                    <div class="btn-group" style="width:75px">
-                      <button type="button" class="btn btn-primary btn-sm" disabled="disabled">Brief</button>
-                      <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                        <span class="caret"></span>
-                        <span class="sr-only">Toggle Dropdown</span>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                        <li><a href="#"><span class="glyphicon glyphicon-print"></span>&nbsp; Print Ticket</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; Automated Call</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-earphone"></span>&nbsp; Patch call through</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit team</a></li>
-                        <li class="divider"></li>
-                        <li class="bg-danger"><a href="#"><span class="glyphicon glyphicon-remove"></span>&nbsp; Remove Team</a></li>
-                      </ul>
-                    </div>
-                  </td>
-                </tr>
+              <tbody id="cueRows">
               </tbody>
             </table>
           </div>
@@ -250,7 +198,38 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
 
-    <script src="javascript/rowHB.hjs" id="cueRow" type="text/x-handlebars-template">
+    <script id="rowTemplate" type="x-handlebars-template">
+    {{#each teams}}
+    {{#if status}}
+    {{else}}
+                <tr id="row-{{ teamID }}">
+                  <td>{{ teamName }}</td>
+                  <td>{{ pilotName }}</td>
+                  <td>{{ tacticalName }}</td>
+                  <td>{{ engineerName }}</td>
+                  <td>{{ contactNumber }}</td>
+                  <td>{{ bookingTime }}</td>
+                  <td style="text-align: right;">
+                    <!-- Split button -->
+                    <div class="btn-group" style="width:75px;">
+                      <button type="button" class="btn btn-primary btn-sm" disabled="disabled">Brief</button>
+                      <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                        <li><a href="#"><span class="glyphicon glyphicon-print"></span>&nbsp; Print Ticket</a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; Automated Call</a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-earphone"></span>&nbsp; Patch Call</a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Team</a></li>
+                        <li class="divider"></li>
+                        <li class="bg-danger"><a href="#"><span class="glyphicon glyphicon-remove"></span>&nbsp; Remove Team</a></li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+    {{/if}}
+    {{/each}}
     </script>
 
     <script type="text/javascript">
@@ -266,6 +245,62 @@
         $('.content.active').hide().removeClass('active');
         $('#'+contentToShow).show().addClass('active');
       });
+    });
+    </script>
+
+    <script type="text/javascript">
+    $(function(){
+      //Diry tab selection code, FIXME
+       var theTemplateScript = $("#rowTemplate").html();  
+      var theTemplate = Handlebars.compile (theTemplateScript);  
+
+      $('#cueRows').append(theTemplate ({
+        teams: [{
+          teamID: "boo",
+          teamName: "The trolls",
+          pilotName: "Timmy",
+          tacticalName: "bob",
+          engineerName: "willy",
+          contactNumber: "07733223902",
+          bookingTime: "10/10 09:44",
+          status: 0
+        },
+        {
+          teamID: "twit",
+          teamName: "The knobs",
+          pilotName: "knob",
+          tacticalName: "knobby",
+          engineerName: "balls",
+          contactNumber: "09955432850",
+          bookingTime: "10/10 14:32",
+          status: 0
+        },
+        {
+          teamID: "twiddsdsdssdsds",
+          teamName: "Nexus",
+          pilotName: "pete",
+          tacticalName: "patter",
+          engineerName: "randy",
+          contactNumber: "0123456789",
+          bookingTime: "10/10 14:59",
+          status: 1
+        }]
+      }));
+
+      $('#cueRows').prepend(theTemplate ({
+        teams: [{
+          teamID: "COCK",
+          teamName: "COCKING",
+          pilotName: "COOOOCK",
+          tacticalName: "TWAT",
+          engineerName: "FUCK",
+          contactNumber: "07700023902",
+          bookingTime: "10/10 08:14",
+          status: 0
+        }]
+      }));
+
+      $('#row-boo').remove();
     });
     </script>
 
