@@ -67,7 +67,7 @@
             <!-- Default panel contents -->
             <div class="panel-heading">Simulator</div>
             <div class="panel-body">
-              <p><strong>Team:</strong> <span class="briefTeamName">The mother huggers</span></p>
+              <p><strong>Team:</strong> <span id="simTeamName">The mother huggers</span></p>
               <div class="text-center">
                 <div class="btn-group">
                   <button type="button" class="btn btn-primary">Cue</button>
@@ -83,7 +83,7 @@
             <!-- Default panel contents -->
             <div class="panel-heading">Briefing Room</div>
             <div class="panel-body">
-              <p><strong>Team:</strong> <span class="briefTeamName">Russ and his merry men</span></p>
+              <p><strong>Team:</strong> <span id="briefTeamName">Russ and his merry men</span></p>
               <div class="text-center">
                 <div class="btn-group">
                   <button type="button" class="btn btn-primary">Cue</button>
@@ -202,7 +202,7 @@
     {{#each teams}}
     {{#if status}}
     {{else}}
-                <tr id="row-{{ teamID }}">
+                <tr id="row-{{ teamID }}" class="cueRow">
                   <td>{{ teamName }}</td>
                   <td>{{ pilotName }}</td>
                   <td>{{ tacticalName }}</td>
@@ -256,7 +256,7 @@
 
       $('#cueRows').append(theTemplate ({
         teams: [{
-          teamID: "boo",
+          teamID: "k2uynl43hb",
           teamName: "The trolls",
           pilotName: "Timmy",
           tacticalName: "bob",
@@ -266,17 +266,17 @@
           status: 0
         },
         {
-          teamID: "twit",
+          teamID: "9ffndlkwb7",
           teamName: "The knobs",
           pilotName: "knob",
           tacticalName: "knobby",
-          engineerName: "balls",
+          engineerName: "eric",
           contactNumber: "09955432850",
           bookingTime: "10/10 14:32",
           status: 0
         },
         {
-          teamID: "twiddsdsdssdsds",
+          teamID: "jiooo49f1m",
           teamName: "Nexus",
           pilotName: "pete",
           tacticalName: "patter",
@@ -289,20 +289,72 @@
 
       $('#cueRows').prepend(theTemplate ({
         teams: [{
-          teamID: "COCK",
-          teamName: "COCKING",
-          pilotName: "COOOOCK",
-          tacticalName: "TWAT",
-          engineerName: "FUCK",
+          teamID: "55huzpz2gr",
+          teamName: "Prepended Team",
+          pilotName: "Henry",
+          tacticalName: "Thomas",
+          engineerName: "Phil",
           contactNumber: "07700023902",
           bookingTime: "10/10 08:14",
           status: 0
         }]
       }));
 
-      $('#row-boo').remove();
+      function addToCue(team, prepend){
+        // Add team data to new row, pre/append as requested  
+        // Get template into handlebar compiler
+        var rowTemplate = Handlebars.compile ($("#rowTemplate").html());  
+
+        // Pre or append to list
+        if(prepend){
+          $('#cueRows').prepend(rowTemplate(team);
+        }
+        else{
+          $('#cueRows').append(rowTemplate(team);
+        }
+      }
+
+      function removeFromCue(team){
+        // Take the teamID from the passed team data and use it to search and remove the row
+        $('#row-'+team.teamID).remove();
+      }
+
+      function clearCue(){
+        // Perform a remove() on any items with the class cueRow
+        $('.cueRow').remove();
+      }
+
+      function addToBrief(team){
+        // Set the passed team's name within the span id=briefTeamName
+        $('#briefTeamName').html(team.teamName);
+      }
+
+      function clearBrief(){
+        // Clear the team name within the span id=briefTeamName
+        $('#briefTeamName').html('');
+      }
+
+      function addToSim(team){
+        // Set the passed team's name within the span id=simTeamName
+        $('#simTeamName').html(team.teamName);
+      }
+
+      function clearSim(){
+        // Clear the team name within the span id=simTeamName
+        $('#simTeamName').html('');
+      }
+
+      function clearPage(){
+        clearCue();
+        clearBrief();
+        clearSim();
+      }
+
+      function processTeam(teams){
+        // Itterate over all passed teams and pass on to correct runctions for placement on page
+        
+      }
     });
     </script>
-
   </body>
 </html>
