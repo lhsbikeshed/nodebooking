@@ -11,6 +11,29 @@ var routes = require('./routes/index');
 
 var app = express();
 
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
+// DB Setup
+mongoose.connect('mongodb://localhost/bookings');
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback () {
+  // yay!
+});
+
+var bookingSchema = mongoose.Schema({
+    _id: Number,
+    teamName: String,
+    pilotName: String,
+    tacticalName: String,
+    engineerName: String,
+    contactName: String,
+    bookingTime: Date,
+    status: Number,
+    contactEmail: String
+});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hjs');
@@ -25,6 +48,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 //app.use('/users', users);
+
+io.on('connection', function(socket){
+  console.log('a user connected');
+  socket.on('syncRequest', function(ms){
+    console.log('syncRequest received');
+  });
+});
+
+http.listen(2000, function(){
+  console.log('listening on *:2000');
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

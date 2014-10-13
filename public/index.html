@@ -12,6 +12,7 @@
 
     <!-- Optional theme -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
 
     <style type="text/css">
 
@@ -22,6 +23,25 @@
     .content.active{
       display:block;
     }
+
+    .wrapper{padding-bottom:50px;}
+    .header{background:#000000;}
+    .header .container{padding-bottom:20px;}
+    .header .container h1{color:#FFF;line-height:50px;margin-top:30px;margin-bottom:0;}
+    .header .container h3{color:#E0E0E0;font-size:16px;margin-top:-5px;}
+    .header .container h3 a{color:#66aacc;}
+    .header .container h3 a:hover{color:#b3d5e6;}
+    .top-menu{position:absolute;z-index:9999;}
+    .top-menu .nav-list{background:rgba(255, 255, 255, 0.8);border:1px solid #CCC;margin:20px;position:fixed;right:0;}
+    pre,.well{background:#FFFFFF;}
+    
+    .syntax-container{background:#FCFCFC;-webkit-border-radius:7px;-webkit-background-clip:padding-box;-moz-border-radius:7px;-moz-background-clip:padding;border-radius:7px;background-clip:padding-box;border:1px solid #e3e3e3;margin-bottom:30px;padding-bottom:20px;}
+
+    .isloading-wrapper.isloading-right{margin-left:10px;}
+
+    .isloading-overlay{position:relative;text-align:center;}
+
+    .isloading-overlay .isloading-wrapper{background:#FFFFFF;-webkit-border-radius:7px;-webkit-background-clip:padding-box;-moz-border-radius:7px;-moz-background-clip:padding;border-radius:7px;background-clip:padding-box;display:inline-block;margin:0 auto;padding:10px 20px;top:30%;z-index:9000;}
 
     </style>
 
@@ -197,9 +217,10 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
-
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/javascript/jquery.isloading.js"></script>
     <script id="rowTemplate" type="x-handlebars-template">
-                <tr id="row-{{ teamID }}" class="cueRow">
+                <tr id="row-{{ _id }}" class="cueRow">
                   <td>{{ teamName }}</td>
                   <td>{{ pilotName }}</td>
                   <td>{{ tacticalName }}</td>
@@ -244,6 +265,7 @@
     </script>
 
     <script type="text/javascript">
+    $.isLoading({ text: "Connecting to server &nbsp;" });
     $(function(){
       //Diry tab selection code, FIXME
        var theTemplateScript = $("#rowTemplate").html();  
@@ -251,7 +273,7 @@
 
       var testTeams = [
         {
-          teamID: "k2uynl43hb",
+          _id: "k2uynl43hb",
           teamName: "The trolls",
           pilotName: "Timmy",
           tacticalName: "Bob",
@@ -261,7 +283,7 @@
           status: 0
         },
         {
-          teamID: "9ffndlkwb7",
+          _id: "9ffndlkwb7",
           teamName: "The knobs",
           pilotName: "Knob",
           tacticalName: "Knobby",
@@ -271,7 +293,7 @@
           status: 1
         },
         {
-          teamID: "jiooo49f1m",
+          _id: "jiooo49f1m",
           teamName: "Nexus",
           pilotName: "Pete",
           tacticalName: "Patter",
@@ -281,7 +303,7 @@
           status: 0
         },
         {
-          teamID: "55huzpz2gr",
+          _id: "55huzpz2gr",
           teamName: "Prepended Team",
           pilotName: "Henry",
           tacticalName: "Thomas",
@@ -309,8 +331,8 @@
       }
 
       function removeFromCue(team){
-        // Take the teamID from the passed team data and use it to search and remove the row
-        $('#row-'+team.teamID).remove();
+        // Take the _id from the passed team data and use it to search and remove the row
+        $('#row-'+team._id).remove();
       }
 
       function clearCue(){
@@ -379,7 +401,7 @@
       /*processTeam(testTeams);
       clearBrief();
       addToCue({
-          teamID: "k5nbssj90l",
+          _id: "k5nbssj90l",
           teamName: "Bronies",
           pilotName: "Timmy",
           tacticalName: "Nick",
@@ -389,7 +411,7 @@
           status: 0
         });
       removeFromCue({
-          teamID: "k2uynl43hb",
+          _id: "k2uynl43hb",
           teamName: "The trolls",
           pilotName: "Timmy",
           tacticalName: "Bob",
@@ -398,6 +420,19 @@
           bookingTime: "10/10 09:44",
           status: 4
         });*/
+      var socket = io();
+
+      socket.on('connect', function(){
+        // We have connected over the socket, clear the page and request a full refresh
+        clearPage();
+        socket.emit('syncRequest');
+      });
+
+      socket.on('sync', function(teams){
+        clearPage();
+        processTeam(teams);
+        $.isLoading( "hide" );
+      });
     });
     </script>
   </body>
