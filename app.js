@@ -66,7 +66,7 @@ io.on('connection', function(socket){
   });
 
   socket.on('addTeam', function (team){
-    Booking.create(team, function(err, team){
+    Booking.create(team, function (err, team){
       if(err) console.log(err);
       else{
         socket.emit('teamAddedSuccess', team);

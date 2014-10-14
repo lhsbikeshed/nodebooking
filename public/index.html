@@ -236,12 +236,12 @@
                         <span class="sr-only">Toggle Dropdown</span>
                       </button>
                       <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                        <li><a href="#"><span class="glyphicon glyphicon-print"></span>&nbsp; Print Ticket</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; Automated Call</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-earphone"></span>&nbsp; Patch Call</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Team</a></li>
+                        <li class="printTicket" ref="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-print"></span>&nbsp; Print Ticket</a></li>
+                        <li class="autoCall"><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; Automated Call</a></li>
+                        <li class="patchCall"><a href="#"><span class="glyphicon glyphicon-earphone"></span>&nbsp; Patch Call</a></li>
+                        <li class="editTeam"><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Team</a></li>
                         <li class="divider"></li>
-                        <li class="bg-danger"><a href="#"><span class="glyphicon glyphicon-remove"></span>&nbsp; Remove Team</a></li>
+                        <li class="bg-danger removeTeam"><a href="#"><span class="glyphicon glyphicon-remove"></span>&nbsp; Remove Team</a></li>
                       </ul>
                     </div>
                   </td>
@@ -398,6 +398,11 @@
       socket.on('teamRemovedSuccess', function(team){
         removeTeam(team);
       });
+
+      // Click handling
+      $('.nav-tabs li').on('click', function(){
+        //
+      }
     });
     </script>
   </body>
