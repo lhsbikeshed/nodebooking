@@ -23,16 +23,18 @@ db.once('open', function callback () {
 });
 
 var bookingSchema = mongoose.Schema({
-    _id: Number,
     teamName: String,
     pilotName: String,
     tacticalName: String,
     engineerName: String,
-    contactName: String,
+    contactNumber: String,
     bookingTime: Date,
     status: Number,
-    contactEmail: String
+    contactEmail: String,
+    deathReason: String
 });
+
+var Booking = mongoose.model('Booking', bookingSchema);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -51,8 +53,26 @@ app.use('/', routes);
 
 io.on('connection', function(socket){
   console.log('a user connected');
-  socket.on('syncRequest', function(ms){
+  socket.on('syncRequest', function(msg){
+    // Grab all entries and send them
     console.log('syncRequest received');
+    Booking.find('', function (err, data){
+      if(err) console.log(err);
+      else{
+        socket.emit('syncResponce', data);
+        console.log('sending syncResponce');
+      }
+    });
+  });
+
+  socket.on('addTeam', function (team){
+    Booking.create(team, function(err, team){
+      if(err) console.log(err);
+      else{
+        socket.emit('teamAddedSuccess', team);
+        socket.broadcast.emit('teamAdded', team);
+      }
+    });
   });
 });
 

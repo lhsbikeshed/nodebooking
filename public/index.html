@@ -271,48 +271,6 @@
        var theTemplateScript = $("#rowTemplate").html();  
       var theTemplate = Handlebars.compile (theTemplateScript);  
 
-      var testTeams = [
-        {
-          _id: "k2uynl43hb",
-          teamName: "The trolls",
-          pilotName: "Timmy",
-          tacticalName: "Bob",
-          engineerName: "Willy",
-          contactNumber: "07733223902",
-          bookingTime: "10/10 09:44",
-          status: 0
-        },
-        {
-          _id: "9ffndlkwb7",
-          teamName: "The knobs",
-          pilotName: "Knob",
-          tacticalName: "Knobby",
-          engineerName: "Eric",
-          contactNumber: "09955432850",
-          bookingTime: "10/10 14:32",
-          status: 1
-        },
-        {
-          _id: "jiooo49f1m",
-          teamName: "Nexus",
-          pilotName: "Pete",
-          tacticalName: "Patter",
-          engineerName: "Randy",
-          contactNumber: "0123456789",
-          bookingTime: "10/10 14:59",
-          status: 0
-        },
-        {
-          _id: "55huzpz2gr",
-          teamName: "Prepended Team",
-          pilotName: "Henry",
-          tacticalName: "Thomas",
-          engineerName: "Phil",
-          contactNumber: "07700023902",
-          bookingTime: "10/10 15:14",
-          status: 0
-        }];
-
       function addToCue(team, prepend){
         // Add team data to new row, pre/append as requested  
         // Get template into handlebar compiler
@@ -397,29 +355,14 @@
         }
       }
 
+      function removeTeam(team){
+        removeFromCue(team);
+        if($('#simTeamName').html()==team.teamName) clearSim();
+        if($('#briefTeamName').html()==team.teamName) clearBrief();
+      }
+
       clearPage();
-      /*processTeam(testTeams);
-      clearBrief();
-      addToCue({
-          _id: "k5nbssj90l",
-          teamName: "Bronies",
-          pilotName: "Timmy",
-          tacticalName: "Nick",
-          engineerName: "Loppy",
-          contactNumber: "012853389",
-          bookingTime: "10/10 19:29",
-          status: 0
-        });
-      removeFromCue({
-          _id: "k2uynl43hb",
-          teamName: "The trolls",
-          pilotName: "Timmy",
-          tacticalName: "Bob",
-          engineerName: "Willy",
-          contactNumber: "07733223902",
-          bookingTime: "10/10 09:44",
-          status: 4
-        });*/
+
       var socket = io();
 
       socket.on('connect', function(){
@@ -428,10 +371,32 @@
         socket.emit('syncRequest');
       });
 
-      socket.on('sync', function(teams){
+      socket.on('reconnecting', function(){
+        // Lost connection, show connecting spinner
+        $.isLoading( "hide" );
+        $.isLoading({ text: "Connecting to server &nbsp;" });
+      });
+
+      socket.on('syncResponce', function(teams){
         clearPage();
         processTeam(teams);
         $.isLoading( "hide" );
+      });
+
+      socket.on('teamAdded', function(team){
+        processTeam(team);
+      });
+
+      socket.on('teamAddedSuccess', function(team){
+        processTeam(team);
+      });
+
+      socket.on('teamRemoved', function(team){
+        removeTeam(team);
+      });
+
+      socket.on('teamRemovedSuccess', function(team){
+        removeTeam(team);
       });
     });
     </script>
