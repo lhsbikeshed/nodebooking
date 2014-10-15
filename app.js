@@ -88,7 +88,7 @@ io.on('connection', function(socket){
   });
 
   socket.on('removeTeam', function (team){
-    if(team._id==undefined){
+    if(team._id==''){
       console.log('error,no team');
     }
     else{

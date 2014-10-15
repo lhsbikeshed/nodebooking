@@ -203,7 +203,7 @@
             </div>
             <div class="form-group">
                 <div class="col-xs-offset-2 col-xs-10">
-                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                    <button type="submit" class="btn btn-primary">Save Settings</button> 
                 </div>
             </div>
           </form>
@@ -236,10 +236,10 @@
                         <span class="sr-only">Toggle Dropdown</span>
                       </button>
                       <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                        <li class="printTicket" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-print"></span>&nbsp; Print Ticket</a></li>
-                        <li class="autoCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; Automated Call</a></li>
-                        <li class="patchCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-earphone"></span>&nbsp; Patch Call</a></li>
-                        <li class="editTeam" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Team</a></li>
+                        <li class="printTicket" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-print"></span>&nbsp; <s>Print Ticket</a></s></li>
+                        <li class="autoCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; <s>Automated Call</a></s></li>
+                        <li class="patchCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-earphone"></span>&nbsp; <s>Patch Call</a></s></li>
+                        <li class="editTeam" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; <s>Edit Team</a></s></li>
                         <li class="divider"></li>
                         <li class="bg-danger removeTeam" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-remove"></span>&nbsp; Remove Team</a></li>
                       </ul>
@@ -286,14 +286,6 @@
         if($('#briefTeamName').html()!=''){
           $('.briefBTN').prop('disabled', true);
         }
-
-        $('.removeTeam').on('click', function(){
-          // Get a remove dropdown clicked, find what team for and request removal
-          var removeID = $(this).attr('rel');
-
-          socket.emit('removeTeam', { _id: removeID });
-          console.log('removing team: ' + removeID);
-        });
       }
 
       function removeFromCue(team){
@@ -407,12 +399,12 @@
         removeTeam(team);
       });
 
-      // // Click handling
-      // $('.removeTeam').on('click', function(){
-      //   // Get a remove dropdown clicked, find what team for and request removal
-      //   socket.emit('removeTeam', { _id: $(this).attr('rel')});
-      //   console.log('removing team:' + $(this).attr('rel'));
-      // });
+      // Click handling
+      $('#cueRows').on('click', '.removeTeam', function(){
+        // Get a remove dropdown clicked, find what team for and request removal
+        socket.emit('removeTeam', { _id: $(this).attr('rel')});
+        console.log('removing team:' + $(this).attr('rel'));
+      });
     });
     </script>
   </body>
