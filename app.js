@@ -36,6 +36,18 @@ var bookingSchema = mongoose.Schema({
 
 var Booking = mongoose.model('Booking', bookingSchema);
 
+Booking.create({
+    teamName: "Boop Team",
+    pilotName: "Pilot name",
+    tacticalName: "Tac name",
+    engineerName: "Engineer name",
+    contactNumber: "0987654321",
+    bookingTime: Date(),
+    status: 0,
+    contactEmail: "boobs@boobs.com",
+    deathReason: ""
+})
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hjs');
@@ -73,6 +85,25 @@ io.on('connection', function(socket){
         socket.broadcast.emit('teamAdded', team);
       }
     });
+  });
+
+  socket.on('removeTeam', function (team){
+    if(team._id==undefined){
+      console.log('error,no team');
+    }
+    else{
+      console.log('removing team:');
+      console.log(team._id);
+      Booking.findByIdAndRemove(team._id, function (err, team){
+        if(err) console.log(err);
+        else{
+          socket.emit('teamRemovedSuccess', team);
+          socket.broadcast.emit('teamRemoved', team);
+          console.log('team removed:');
+          console.log(team._id);
+        }
+      });
+    }
   });
 });
 

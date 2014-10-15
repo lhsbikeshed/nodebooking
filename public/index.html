@@ -236,12 +236,12 @@
                         <span class="sr-only">Toggle Dropdown</span>
                       </button>
                       <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                        <li class="printTicket" ref="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-print"></span>&nbsp; Print Ticket</a></li>
-                        <li class="autoCall"><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; Automated Call</a></li>
-                        <li class="patchCall"><a href="#"><span class="glyphicon glyphicon-earphone"></span>&nbsp; Patch Call</a></li>
-                        <li class="editTeam"><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Team</a></li>
+                        <li class="printTicket" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-print"></span>&nbsp; Print Ticket</a></li>
+                        <li class="autoCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; Automated Call</a></li>
+                        <li class="patchCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-earphone"></span>&nbsp; Patch Call</a></li>
+                        <li class="editTeam" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Team</a></li>
                         <li class="divider"></li>
-                        <li class="bg-danger removeTeam"><a href="#"><span class="glyphicon glyphicon-remove"></span>&nbsp; Remove Team</a></li>
+                        <li class="bg-danger removeTeam" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-remove"></span>&nbsp; Remove Team</a></li>
                       </ul>
                     </div>
                   </td>
@@ -286,6 +286,14 @@
         if($('#briefTeamName').html()!=''){
           $('.briefBTN').prop('disabled', true);
         }
+
+        $('.removeTeam').on('click', function(){
+          // Get a remove dropdown clicked, find what team for and request removal
+          var removeID = $(this).attr('rel');
+
+          socket.emit('removeTeam', { _id: removeID });
+          console.log('removing team: ' + removeID);
+        });
       }
 
       function removeFromCue(team){
@@ -399,10 +407,12 @@
         removeTeam(team);
       });
 
-      // Click handling
-      $('.nav-tabs li').on('click', function(){
-        //
-      }
+      // // Click handling
+      // $('.removeTeam').on('click', function(){
+      //   // Get a remove dropdown clicked, find what team for and request removal
+      //   socket.emit('removeTeam', { _id: $(this).attr('rel')});
+      //   console.log('removing team:' + $(this).attr('rel'));
+      // });
     });
     </script>
   </body>
