@@ -88,11 +88,18 @@
             <div class="panel-heading">Simulator</div>
             <div class="panel-body">
               <p><strong>Team:</strong> <span id="simTeamName"></span></p>
+              <p id="simDetails">
+                <b>Pilot: </b><span id="simPilotName"></span><br />
+                <b>Tactical: </b><span id="simTacticalName"></span><br />
+                <b>Enineering: </b><span id="simEngineeringName"></span><br />
+                <b>Phone: </b><span id="simPhone"></span><br />
+                <b>Email: </b><span id="simEmail"></span><br />
+              </p>
               <div class="text-center">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-primary simBTNCue simRoomBTN">Cue</button>
-                  <button type="button" class="btn btn-info simBTNView simRoomBTN">View details</button>
-                  <button type="button" class="btn btn-danger simBTNDisembark simRoomBTN">Disembark</button>
+                  <button type="button" class="btn btn-primary simBTNCue simRoomBTN" rel="">Cue</button>
+                  <button type="button" class="btn btn-info simBTNView simRoomBTN" rel="">Details <span id="simArrow" class="glyphicon glyphicon-arrow-down"></span></button>
+                  <button type="button" class="btn btn-danger simBTNDisembark simRoomBTN" rel="">Disembark</button>
                 </div>
               </div>
             </div>
@@ -104,11 +111,18 @@
             <div class="panel-heading">Briefing Room</div>
             <div class="panel-body">
               <p><strong>Team:</strong> <span id="briefTeamName"></span></p>
+              <p id="briefDetails">
+                <b>Pilot: </b><span id="briefPilotName"></span><br />
+                <b>Tactical: </b><span id="briefTacticalName"></span><br />
+                <b>Enineering: </b><span id="briefEngineeringName"></span><br />
+                <b>Phone: </b><span id="briefPhone"></span><br />
+                <b>Email: </b><span id="briefEmail"></span><br />
+              </p>
               <div class="text-center">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-primary briefBTNCue briefRoomBTN">Cue</button>
-                  <button type="button" class="btn btn-info briefBTNView briefRoomBTN">View details</button>
-                  <button type="button" class="btn btn-success briefBTNEmbark briefRoomBTN">Embark</button>
+                  <button type="button" class="btn btn-primary briefBTNCue briefRoomBTN" rel="">Cue</button>
+                  <button type="button" class="btn btn-info briefBTNView briefRoomBTN" rel="">Details <span id="briefArrow" class="glyphicon glyphicon-arrow-down"></span></button>
+                  <button type="button" class="btn btn-success briefBTNEmbark briefRoomBTN" rel="">Embark</button>
                 </div>
               </div>
             </div>
@@ -301,28 +315,50 @@
       function addToBrief(team){
         // Set the passed team's name within the span id=briefTeamName
         $('#briefTeamName').html(team.teamName);
+        $('#briefPilotName').html(team.pilotName);
+        $('#briefTacticalName').html(team.tacticalName);
+        $('#briefEngineeringName').html(team.engineerName);
+        $('#briefPhone').html(team.contactNumber);
+        $('#briefEmail').html(team.contactEmail);
+
         $('.briefBTN').prop('disabled', true);
-        $('.briefBTNCue').prop('disabled', false);
-        $('.briefBTNView').prop('disabled', false);
+        $('.briefBTNCue').prop('disabled', false).attr('rel', team._id);
+        $('.briefBTNView').prop('disabled', false).attr('rel', team._id);
         if($('#simTeamName').html()==''){
-          $('.briefBTNEmbark').prop('disabled', false);
+          $('.briefBTNEmbark').prop('disabled', false).attr('rel', team._id);
         }
         else {
-          $('.briefBTNEmbark').prop('disabled', true);
+          $('.briefBTNEmbark').prop('disabled', true).attr('rel', team._id);
         }
       }
 
       function clearBrief(){
         // Clear the team name within the span id=briefTeamName
         $('#briefTeamName').html('');
+        $('#briefPilotName').html('');
+        $('#briefTacticalName').html('');
+        $('#briefEngineeringName').html('');
+        $('#briefPhone').html('');
+        $('#briefEmail').html('');
         $('.briefBTN').prop('disabled', false);
-        $('.briefRoomBTN').prop('disabled', true);
+        $('.briefBTNCue').prop('disabled', false).attr('rel', '');
+        $('.briefRoomBTN').prop('disabled', true).attr('rel', '');
+        $('.briefBTNEmbark').prop('disabled', true).attr('rel', '');
+
+        $('#briefArrow').removeClass('glyphicon-arrow-up').addClass('glyphicon-arrow-down');
+        $('#briefDetails').hide();
       }
 
       function addToSim(team){
         // Set the passed team's name within the span id=simTeamName
         $('#simTeamName').html(team.teamName);
-        $('.simRoomBTN').prop('disabled', false);
+        $('#simPilotName').html(team.pilotName);
+        $('#simTacticalName').html(team.tacticalName);
+        $('#simEngineeringName').html(team.engineerName);
+        $('#simPhone').html(team.contactNumber);
+        $('#simEmail').html(team.contactEmail);
+
+        $('.simRoomBTN').prop('disabled', false).attr('rel', team._id);
         if($('#briefTeamName').html()!=''){
           $('.briefBTNEmbark').prop('disabled', true);
         }
@@ -331,13 +367,22 @@
       function clearSim(){
         // Clear the team name within the span id=simTeamName
         $('#simTeamName').html('');
-        $('.simRoomBTN').prop('disabled', true);
+        $('#simPilotName').html('');
+        $('#simTacticalName').html('');
+        $('#simEngineeringName').html('');
+        $('#simPhone').html('');
+        $('#simEmail').html('');
+
+        $('.simRoomBTN').prop('disabled', true).attr('rel', '');
         if($('#briefTeamName').html()==''){
           $('.briefBTNEmbark').prop('disabled', true);
         }
         else {
           $('.briefBTNEmbark').prop('disabled', false);
         }
+
+        $('#simArrow').removeClass('glyphicon-arrow-up').addClass('glyphicon-arrow-down');
+        $('#simDetails').hide();
       }
 
       function clearPage(){
@@ -346,7 +391,7 @@
         clearSim();
       }
 
-      function processTeam(teams){
+      function processTeams(teams){
         // Itterate over all passed teams and pass on to correct runctions for placement on page
         for(var i = 0; i<teams.length; i++){
           if(teams[i].status == 0) addToCue(teams[i]);
@@ -355,10 +400,35 @@
         }
       }
 
+      function processTeam(team){
+        if(team.status == 0) addToCue(team);
+        else if(team.status == 1) addToBrief(team);
+        else if(team.status == 2) addToSim(team);
+      }
+
       function removeTeam(team){
         removeFromCue(team);
         if($('#simTeamName').html()==team.teamName) clearSim();
         if($('#briefTeamName').html()==team.teamName) clearBrief();
+      }
+
+      function findCurrentState(team){
+        if($('#row-'+team._id).length){
+          // Exists in cue
+          return 0;
+        }
+        else if($('.briefBTNCue').attr('rel')==team._id){
+          // Currently in brief
+          return 1;
+        }
+        else if($('.simBTNCue').attr('rel')==team._id){
+          // Currently in sim
+          return 2;
+        }
+        else{
+          // Currently nowhere
+          return 3;
+        }
       }
 
       clearPage();
@@ -379,7 +449,7 @@
 
       socket.on('syncResponce', function(teams){
         clearPage();
-        processTeam(teams);
+        processTeams(teams);
         $.isLoading( "hide" );
       });
 
@@ -399,6 +469,29 @@
         removeTeam(team);
       });
 
+      socket.on('teamUpdated', function(team){
+        // This is horible, make a real update
+        console.log('got update');
+        console.log(findCurrentState(team));
+        clearPage();
+        socket.emit('syncRequest');
+      });
+
+      socket.on('teamUpdatedSuccess', function(team){
+        // This is still horrible
+        console.log('got update success');
+        var currentStatus = findCurrentState(team);
+        console.log(currentStatus);
+        if(currentStatus!=team.status){
+          // Status has changed
+          console.log('status changed, removing and adding');
+          removeTeam(team);
+          processTeam(team);
+        }
+        //clearPage();
+        //socket.emit('syncRequest');
+      });
+
       // Click handling
       $('#cueRows').on('click', '.removeTeam', function(){
         // Get a remove dropdown clicked, find what team for and request removal
@@ -410,6 +503,64 @@
         // Got a brief button click, send an update request
         socket.emit('updateTeam', { _id: $(this).attr('rel'), update: {status: 1}});
         console.log('updating team: ' + $(this).attr('rel') + ' to status 1');
+      });
+
+      $('.briefBTNCue').on('click', function(){
+        // Got a return to cue button for briefing room, send an update request
+        socket.emit('updateTeam', { _id: $(this).attr('rel'), update: {status: 0}});
+        console.log('updating team: ' + $(this).attr('rel') + ' to status 1');
+      });
+
+      $('.briefBTNEmbark').on('click', function(){
+        // Got a return to cue button for briefing room, send an update request
+        socket.emit('updateTeam', { _id: $(this).attr('rel'), update: {status: 2}});
+        console.log('updating team: ' + $(this).attr('rel') + ' to status 1');
+      });
+
+      $('.simBTNCue').on('click', function(){
+        // Got a return to cue button for the sim, send an update request
+        socket.emit('updateTeam', { _id: $(this).attr('rel'), update: {status: 0}});
+        console.log('updating team: ' + $(this).attr('rel') + ' to status 1');
+      });
+
+      $('.simBTNDisembark').on('click', function(){
+        // Got a force disembark request, send an update request
+        // TODO
+        //   Add pop up warning with input for death reason
+        socket.emit('updateTeam', { _id: $(this).attr('rel'), update: {status: 3, deathReason: 'Dead'}});
+        console.log('updating team: ' + $(this).attr('rel') + ' to status 1');
+      });
+
+      // Start info hidden
+      $('#briefDetails').hide();
+      $('#simDetails').hide();
+
+      $('.briefBTNView').on('click', function(){
+        // Show or hide the extended details
+        if($('#briefArrow').attr('class')=='glyphicon glyphicon-arrow-up'){
+          // Details currently shown, hide them
+          $('#briefArrow').removeClass('glyphicon-arrow-up').addClass('glyphicon-arrow-down');
+          $('#briefDetails').slideToggle(200);
+        }
+        else {
+          // Details currently hidden, show them
+          $('#briefArrow').removeClass('glyphicon-arrow-down').addClass('glyphicon-arrow-up');
+          $('#briefDetails').slideToggle(200);
+        }
+      });
+
+      $('.simBTNView').on('click', function(){
+        // Show or hide the extended details
+        if($('#simArrow').attr('class')=='glyphicon glyphicon-arrow-up'){
+          // Details currently shown, hide them
+          $('#simArrow').removeClass('glyphicon-arrow-up').addClass('glyphicon-arrow-down');
+          $('#simDetails').slideToggle(200);
+        }
+        else {
+          // Details currently hidden, show them
+          $('#simArrow').removeClass('glyphicon-arrow-down').addClass('glyphicon-arrow-up');
+          $('#simDetails').slideToggle(200);
+        }
       });
     });
     </script>

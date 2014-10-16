@@ -113,12 +113,12 @@ io.on('connection', function(socket){
     else{
       console.log('updating team:');
       console.log(team._id);
-      Booking.findByIdAndUpdate(team._id, team.update function (err, team){
+      Booking.findByIdAndUpdate(team._id, team.update, function (err, team){
         if(err) console.log(err);
         else{
-          socket.emit('teamRemovedSuccess', team);
-          socket.broadcast.emit('teamRemoved', team);
-          console.log('team removed:');
+          socket.emit('teamUpdatedSuccess', team);
+          socket.broadcast.emit('teamUpdated', team);
+          console.log('team updated:');
           console.log(team._id);
         }
       });
