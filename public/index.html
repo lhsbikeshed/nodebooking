@@ -230,7 +230,7 @@
                   <td style="text-align: right;">
                     <!-- Split button -->
                     <div class="btn-group" style="width:75px;">
-                      <button type="button" class="btn btn-primary btn-sm briefBTN">Brief</button>
+                      <button type="button" class="btn btn-primary btn-sm briefBTN" rel="{{ _id }}">Brief</button>
                       <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
@@ -404,6 +404,12 @@
         // Get a remove dropdown clicked, find what team for and request removal
         socket.emit('removeTeam', { _id: $(this).attr('rel')});
         console.log('removing team:' + $(this).attr('rel'));
+      });
+
+      $('#cueRows').on('click', '.briefBTN', function(){
+        // Got a brief button click, send an update request
+        socket.emit('updateTeam', { _id: $(this).attr('rel'), update: {status: 1}});
+        console.log('updating team: ' + $(this).attr('rel') + ' to status 1');
       });
     });
     </script>

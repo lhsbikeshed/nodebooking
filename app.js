@@ -105,6 +105,25 @@ io.on('connection', function(socket){
       });
     }
   });
+
+  socket.on('updateTeam', function (team){
+    if(team._id==''){
+      console.log('error,no team');
+    }
+    else{
+      console.log('updating team:');
+      console.log(team._id);
+      Booking.findByIdAndUpdate(team._id, team.update function (err, team){
+        if(err) console.log(err);
+        else{
+          socket.emit('teamRemovedSuccess', team);
+          socket.broadcast.emit('teamRemoved', team);
+          console.log('team removed:');
+          console.log(team._id);
+        }
+      });
+    }
+  });
 });
 
 http.listen(2000, function(){
