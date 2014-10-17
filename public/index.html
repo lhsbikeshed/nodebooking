@@ -334,6 +334,7 @@
 
       function clearBrief(){
         // Clear the team name within the span id=briefTeamName
+        console.log('clear brief request');
         $('#briefTeamName').html('');
         $('#briefPilotName').html('');
         $('#briefTacticalName').html('');
@@ -366,6 +367,7 @@
 
       function clearSim(){
         // Clear the team name within the span id=simTeamName
+        console.log('clear sim request');
         $('#simTeamName').html('');
         $('#simPilotName').html('');
         $('#simTacticalName').html('');
@@ -408,8 +410,8 @@
 
       function removeTeam(team){
         removeFromCue(team);
-        if($('#simTeamName').html()==team.teamName) clearSim();
-        if($('#briefTeamName').html()==team.teamName) clearBrief();
+        if($('.briefBTNCue').attr('rel')==team._id) clearBrief();
+        else if($('.simBTNCue').attr('rel')==team._id) clearSim();
       }
 
       function findCurrentState(team){
