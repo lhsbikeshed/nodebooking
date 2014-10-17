@@ -112,15 +112,20 @@ io.on('connection', function(socket){
       team['status'] = 0;
       team['deathReason'] = "";
       console.log(team);
-      Booking.create(team, function (err, team){
-        if(err) console.log(err);
-        else{
-          socket.emit('teamAddedSuccess', team);
-          socket.broadcast.emit('teamAdded', team);
-          console.log('team added:');
-          console.log(team._id);
-        }
-      });
+      if(team.teamName!='' && team.PilotName!='' && team.TacticalName!='' && team.EngineerName!='' && team.contactEmail!='' && team.contactEmail!=''){
+        Booking.create(team, function (err, team){
+          if(err) console.log(err);
+          else{
+            socket.emit('teamAddedSuccess', team);
+            socket.broadcast.emit('teamAdded', team);
+            console.log('team added:');
+            console.log(team._id);
+          }
+        });
+      }
+      else {
+        console.log('some feilds missing');
+      }
     }
   });
 });
