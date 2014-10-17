@@ -36,18 +36,6 @@ var bookingSchema = mongoose.Schema({
 
 var Booking = mongoose.model('Booking', bookingSchema);
 
-Booking.create({
-    teamName: "Boop Team",
-    pilotName: "Pilot name",
-    tacticalName: "Tac name",
-    engineerName: "Engineer name",
-    contactNumber: "0987654321",
-    bookingTime: Date(),
-    status: 0,
-    contactEmail: "boobs@boobs.com",
-    deathReason: ""
-})
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hjs');
@@ -73,16 +61,6 @@ io.on('connection', function(socket){
       else{
         socket.emit('syncResponce', data);
         console.log('sending syncResponce');
-      }
-    });
-  });
-
-  socket.on('addTeam', function (team){
-    Booking.create(team, function (err, team){
-      if(err) console.log(err);
-      else{
-        socket.emit('teamAddedSuccess', team);
-        socket.broadcast.emit('teamAdded', team);
       }
     });
   });
@@ -119,6 +97,27 @@ io.on('connection', function(socket){
           socket.emit('teamUpdatedSuccess', team);
           socket.broadcast.emit('teamUpdated', team);
           console.log('team updated:');
+          console.log(team._id);
+        }
+      });
+    }
+  });
+
+  socket.on('addTeam', function (team){
+    if(team!=''){
+      console.log('adding team:');
+      // console.log(team.teamName);
+      //team = team + {bookingTime: Date(), status: 0, deathReason: ""};
+      team['bookingTime'] = Date();
+      team['status'] = 0;
+      team['deathReason'] = "";
+      console.log(team);
+      Booking.create(team, function (err, team){
+        if(err) console.log(err);
+        else{
+          socket.emit('teamAddedSuccess', team);
+          socket.broadcast.emit('teamAdded', team);
+          console.log('team added:');
           console.log(team._id);
         }
       });
