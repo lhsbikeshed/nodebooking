@@ -61,7 +61,8 @@
       <ul class="nav nav-tabs" role="tablist">
         <li rel="overview" class="active" id="overviewTab"><a href="#">Overview</a></li>
         <li rel="addNewTeam"><a href="#">Add a team</a></li>
-        <li rel="settings"><a href="#">Settings</a></li>
+        <li rel="settings"><a href="#">Settings</a></li></li>
+        <p class="text-right" id="msgArea" class="display: none;" style="padding-top: 5px; font-weight: bold;"></p>
       </ul>
     </div>
 
@@ -434,6 +435,16 @@
         }
       }
 
+      function displayMsg(msg, good){
+        if(good){
+          console.log('displaying msg');
+          $('#msgArea').addClass('text-success').html(msg).show().delay(3000).fadeOut(400, function(){
+            $(this).html('').removeClass('text-success');
+          });
+        }
+      }
+
+
       clearPage();
 
       var socket = io();
@@ -454,6 +465,7 @@
         clearPage();
         processTeams(teams);
         $.isLoading( "hide" );
+        displayMsg('Connected To Server', true);
       });
 
       socket.on('teamAdded', function(team){
@@ -462,6 +474,7 @@
 
       socket.on('teamAddedSuccess', function(team){
         processTeam(team);
+        displayMsg('Team Added', true);
       });
 
       socket.on('teamRemoved', function(team){
@@ -470,6 +483,7 @@
 
       socket.on('teamRemovedSuccess', function(team){
         removeTeam(team);
+        displayMsg('Team Removed', true);
       });
 
       socket.on('teamUpdated', function(team){
@@ -490,6 +504,9 @@
           console.log('status changed, removing and adding');
           removeTeam(team);
           processTeam(team);
+        }
+        else{
+          // Its the details of the team that have changed, update in place
         }
         //clearPage();
         //socket.emit('syncRequest');
