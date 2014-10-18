@@ -68,6 +68,7 @@ io.on('connection', function(socket){
   socket.on('removeTeam', function (team){
     if(team._id==''){
       console.log('error,no team');
+      socket.emit('teamRemovedFail', 'Incorrect ID');
     }
     else{
       console.log('removing team:');
@@ -87,12 +88,16 @@ io.on('connection', function(socket){
   socket.on('updateTeam', function (team){
     if(team._id==''){
       console.log('error,no team');
+      socket.emit('teamUpdatedFail', 'No Team ID');
     }
     else{
       console.log('updating team:');
       console.log(team._id);
       Booking.findByIdAndUpdate(team._id, team.update, function (err, team){
-        if(err) console.log(err);
+        if(err){
+          console.log(err);
+          socket.emit('teamUpdatedFail', err);
+        }
         else{
           socket.emit('teamUpdatedSuccess', team);
           socket.broadcast.emit('teamUpdated', team);
@@ -125,6 +130,7 @@ io.on('connection', function(socket){
       }
       else {
         console.log('some feilds missing');
+        socket.emit('teamAddedFail', 'Missing input');
       }
     }
   });

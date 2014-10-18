@@ -159,41 +159,41 @@
     <div class="content" id="addNewTeam">
       <div class="container">
         <div class="col-md-12">
-          <form class="form-horizontal" action="javascript: this.preventDefault" id="addTeamForm">
+          <form class="form-horizontal" action="javascript: this.preventDefault" id="addTeamForm" autocomplete="off">
             <div class="form-group">
                 <label for="inputEmail" class="control-label col-xs-3">Team Name</label>
                 <div class="col-xs-8">
-                    <input type="text" class="form-control" name="teamName" placeholder="Team Name">
+                    <input type="text" class="form-control" name="teamName" placeholder="Team Name" autocomplete="off">
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputEmail" class="control-label col-xs-3">Pilot Name</label>
                 <div class="col-xs-8">
-                    <input type="text" class="form-control" name="pilotName" placeholder="Pilot Name">
+                    <input type="text" class="form-control" name="pilotName" placeholder="Pilot Name" autocomplete="off">
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputEmail" class="control-label col-xs-3">Tactical Name</label>
                 <div class="col-xs-8">
-                    <input type="text" class="form-control" name="tacticalName" placeholder="Tactical Name">
+                    <input type="text" class="form-control" name="tacticalName" placeholder="Tactical Name" autocomplete="off">
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputEmail" class="control-label col-xs-3">Engineer Name</label>
                 <div class="col-xs-8">
-                    <input type="text" class="form-control" name="engineerName" placeholder="Engineer Name">
+                    <input type="text" class="form-control" name="engineerName" placeholder="Engineer Name" autocomplete="off">
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputEmail" class="control-label col-xs-3">Contact Number</label>
                 <div class="col-xs-8">
-                    <input type="number" class="form-control" pattern="[0-9]*" name="contactNumber" placeholder="Contact Number">
+                    <input type="number" class="form-control" pattern="[0-9]*" name="contactNumber" placeholder="Contact Number" autocomplete="off">
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputEmail" class="control-label col-xs-3">Contact Email</label>
                 <div class="col-xs-8">
-                    <input type="email" class="form-control" name="contactEmail" placeholder="Contact Email">
+                    <input type="email" class="form-control" name="contactEmail" placeholder="Contact Email" autocomplete="off">
                 </div>
             </div>
             <div class="form-group">
@@ -442,6 +442,12 @@
             $(this).html('').removeClass('text-success');
           });
         }
+        else{
+          console.log('displaying msg');
+          $('#msgArea').addClass('text-danger').html(msg).show().delay(3000).fadeOut(400, function(){
+            $(this).html('').removeClass('text-danger');
+          });
+        }
       }
 
 
@@ -477,6 +483,10 @@
         displayMsg('Team Added', true);
       });
 
+      socket.on('teamAddedFail', function(msg){
+        displayMsg('Failed to add team: ' + msg, false);
+      });
+
       socket.on('teamRemoved', function(team){
         removeTeam(team);
       });
@@ -484,6 +494,10 @@
       socket.on('teamRemovedSuccess', function(team){
         removeTeam(team);
         displayMsg('Team Removed', true);
+      });
+
+      socket.on('teamAddedRemovedFail', function(msg){
+        displayMsg('Failed to remove team: ' + msg, false);
       });
 
       socket.on('teamUpdated', function(team){
@@ -510,6 +524,10 @@
         }
         //clearPage();
         //socket.emit('syncRequest');
+      });
+
+      socket.on('teamUpdatedFail', function(msg){
+        displayMsg('Failed to update team: ' + msg, false);
       });
 
       // Click handling
