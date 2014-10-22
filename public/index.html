@@ -70,17 +70,6 @@
       &nbsp;
     </div>
 
-    <!-- <div class="container">
-      <div class="col-md-12">
-        <div class="alertArea">
-          <div class="alert alert-warning alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <strong>Warning!</strong> Something went wrong!
-          </div>
-        </div>
-      </div>
-    </div> -->
-
     <div class="content active" id="overview">
       <div class="container">
         <div class="col-md-4 col-sm-12 col-xs-12 pull-right">
@@ -226,6 +215,61 @@
       </div>
     </div>
 
+    <div class="modal fade" id="editModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Edit Team</h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal" action="javascript: this.preventDefault" id="editTeamForm" autocomplete="off">
+              <div class="form-group">
+                  <label for="inputEmail" class="control-label col-xs-3">Team Name</label>
+                  <div class="col-xs-8">
+                      <input type="text" class="form-control" name="teamName" placeholder="Team Name" autocomplete="off">
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label for="inputEmail" class="control-label col-xs-3">Pilot Name</label>
+                  <div class="col-xs-8">
+                      <input type="text" class="form-control" name="pilotName" placeholder="Pilot Name" autocomplete="off">
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label for="inputEmail" class="control-label col-xs-3">Tactical Name</label>
+                  <div class="col-xs-8">
+                      <input type="text" class="form-control" name="tacticalName" placeholder="Tactical Name" autocomplete="off">
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label for="inputEmail" class="control-label col-xs-3">Engineer Name</label>
+                  <div class="col-xs-8">
+                      <input type="text" class="form-control" name="engineerName" placeholder="Engineer Name" autocomplete="off">
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label for="inputEmail" class="control-label col-xs-3">Contact Number</label>
+                  <div class="col-xs-8">
+                      <input type="number" class="form-control" pattern="[0-9]*" name="contactNumber" placeholder="Contact Number" autocomplete="off">
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label for="inputEmail" class="control-label col-xs-3">Contact Email</label>
+                  <div class="col-xs-8">
+                      <input type="email" class="form-control" name="contactEmail" placeholder="Contact Email" autocomplete="off">
+                  </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -252,10 +296,10 @@
                         <span class="sr-only">Toggle Dropdown</span>
                       </button>
                       <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                        <li class="printTicket" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-print"></span>&nbsp; <s>Print Ticket</a></s></li>
-                        <li class="autoCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; <s>Automated Call</a></s></li>
-                        <li class="patchCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-earphone"></span>&nbsp; <s>Patch Call</a></s></li>
-                        <li class="editTeam" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; <s>Edit Team</a></s></li>
+                        <!-- <li class="printTicket" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-print"></span>&nbsp; Print Ticket</a></li> -->
+                        <!-- <li class="autoCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; Automated Call</a></li> -->
+                        <li class="patchCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-earphone"></span>&nbsp; Patch Call</a></li>
+                        <!-- <li class="editTeam" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Team</a></li> -->
                         <li class="divider"></li>
                         <li class="bg-danger removeTeam" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-remove"></span>&nbsp; Remove Team</a></li>
                       </ul>
@@ -552,10 +596,25 @@
         console.log('removing team:' + $(this).attr('rel'));
       });
 
+      // Click handling
+      $('#cueRows').on('click', '.editTeam', function(){
+        // Populate edit modal with the data and show it
+        console.log('got edit team');
+        $('#editTeamForm')[0].reset();
+        $('#editTeamForm .teamName').val($(this).rel);
+        $('#editModal').modal('show');
+      });
+
       $('#cueRows').on('click', '.briefBTN', function(){
         // Got a brief button click, send an update request
         socket.emit('updateTeam', { _id: $(this).attr('rel'), update: {status: 1}});
         console.log('updating team: ' + $(this).attr('rel') + ' to status 1');
+      });
+
+      $('#cueRows').on('click', '.patchCall', function(){
+        // Got a brief button click, send an update request
+        socket.emit('patchCall', { _id: $(this).attr('rel') });
+        console.log('patching call: ' + $(this).attr('rel'));
       });
 
       $('.briefBTNCue').on('click', function(){
