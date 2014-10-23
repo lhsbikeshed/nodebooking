@@ -226,8 +226,8 @@ io.on('connection', function(socket){
   });
 });
 
-http.listen(2000, function(){
-  console.log('listening on *:2000');
+http.listen(cred.portNum, function(){
+  console.log('listening on *:'+cred.portNum);
 });
 
 // catch 404 and forward to error handler
