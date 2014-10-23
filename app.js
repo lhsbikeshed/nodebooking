@@ -46,12 +46,30 @@ app.set('view engine', 'hjs');
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+var apiRouter = express.Router();
+
+apiRouter.route('/teams')
+  .get(function(req, res) {
+    Booking.find({}, 'teamName pilotName tacticalName engineerName bookingTime status deathReason', function(err, teams) {
+      if (err) {
+        res.send(err);
+      }
+      else {
+        res.json(teams);
+      }
+    });
+  });
+
+
 app.use('/', routes);
+app.use('/api', apiRouter);
 //app.use('/users', users);
+
+
 
 function callCrew(systemNumber, bookingNumber, crewNumber){
   client.makeCall({
