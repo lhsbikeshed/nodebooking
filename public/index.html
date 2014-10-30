@@ -148,7 +148,7 @@
     <div class="content" id="addNewTeam">
       <div class="container">
         <div class="col-md-12">
-          <form class="form-horizontal" action="javascript: this.preventDefault" id="addTeamForm" autocomplete="off">
+          <form class="form-horizontal" id="addTeamForm" autocomplete="off">
             <div class="form-group">
                 <label for="inputEmail" class="control-label col-xs-3">Team Name</label>
                 <div class="col-xs-8">
@@ -251,7 +251,7 @@
               <div class="form-group">
                   <label for="inputEmail" class="control-label col-xs-3">Contact Number</label>
                   <div class="col-xs-8">
-                      <input type="tel" pattern="[0-9]+" fclass="form-control" name="contactNumber" placeholder="Contact Number" autocomplete="off">
+                      <input type="tel" pattern="[0-9]+" class="form-control" name="contactNumber" placeholder="Contact Number" autocomplete="off">
                   </div>
               </div>
               <div class="form-group">
@@ -260,12 +260,12 @@
                       <input type="email" class="form-control" name="contactEmail" placeholder="Contact Email" autocomplete="off">
                   </div>
               </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary saveChanges">Save changes</button>
-          </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary saveChanges">Save changes</button>
+            </div>
+          </form>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
@@ -518,8 +518,6 @@
 
       clearPage();
 
-      $('#disembarkModal').modal('show');
-
       var socket = io();
 
       socket.on('connect', function(){
@@ -567,7 +565,7 @@
         $('#editTeamForm input[name="engineerName"]').val(team.engineerName);
         $('#editTeamForm input[name="contactNumber"]').val(team.contactNumber);
         $('#editTeamForm input[name="contactEmail"]').val(team.contactEmail);
-        $('.saveChanges').attr('rel', team._id);
+        $('#editTeamForm').attr('rel', team._id);
         $('#editModal').modal('show');
       });
 
@@ -616,8 +614,9 @@
       });
 
       // Click handling
-      $('#addTeamFormBTN').on('click', function(){
+      $('#addTeamForm').on('submit', function(event){
         // Get a remove dropdown clicked, find what team for and request removal
+        event.preventDefault();
         console.log('Adding Team');
         socket.emit('addTeam', $('#addTeamForm').serializeJSON());
         console.log($('#addTeamForm').serializeJSON());
@@ -714,12 +713,20 @@
         }
       });
 
-      $('.saveChanges').on('click', function(){
+      $('#editTeamForm').on('submit', function(event){
         // Update team
+        event.preventDefault();
         socket.emit('updateTeam', { _id: $(this).attr('rel') , update: $('#editTeamForm').serializeJSON()});
         $('#editTeamForm')[0].reset();
         $('.saveChanges').attr('rel', '');
         $('#editModal').modal('hide');
+      });
+
+      $(document).keyup(function(e) {
+        if (e.keyCode == 27) { 
+          // Close all modals
+          $('.modal').modal('hide');
+        }   // esc
       });
     });
     </script>
