@@ -264,7 +264,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-primary saveChanges">Save changes</button>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
@@ -299,7 +299,7 @@
                         <!-- <li class="printTicket" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-print"></span>&nbsp; Print Ticket</a></li> -->
                         <!-- <li class="autoCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; Automated Call</a></li> -->
                         <li class="patchCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-earphone"></span>&nbsp; Patch Call</a></li>
-                        <!-- <li class="editTeam" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Team</a></li> -->
+                        <li class="editTeam" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Team</a></li>
                         <li class="divider"></li>
                         <li class="bg-danger removeTeam" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-remove"></span>&nbsp; Remove Team</a></li>
                       </ul>
@@ -531,6 +531,23 @@
         displayMsg('Failed to add team: ' + msg, false);
       });
 
+      socket.on('patchCallFail', function(msg){
+        displayMsg('Failed to patch call: ' + msg, false);
+      });
+
+      socket.on('queryTeamSuccess', function(team){
+        console.log('got query reply')
+        $('#editTeamForm')[0].reset();
+        $('#editTeamForm input[name="teamName"]').val(team.teamName);
+        $('#editTeamForm input[name="pilotName"]').val(team.pilotName);
+        $('#editTeamForm input[name="tacticalName"]').val(team.tacticalName);
+        $('#editTeamForm input[name="engineerName"]').val(team.engineerName);
+        $('#editTeamForm input[name="contactNumber"]').val(team.contactNumber);
+        $('#editTeamForm input[name="contactEmail"]').val(team.contactEmail);
+        $('.saveChanges').attr('rel', team._id);
+        $('#editModal').modal('show');
+      });
+
       socket.on('teamRemoved', function(team){
         removeTeam(team);
       });
@@ -556,7 +573,7 @@
         // This is still horrible
         console.log('got update success');
         var currentStatus = findCurrentState(team);
-        console.log(currentStatus);
+        //console.log(currentStatus);
         if(currentStatus!=team.status){
           // Status has changed
           console.log('status changed, removing and adding');
@@ -565,9 +582,10 @@
         }
         else{
           // Its the details of the team that have changed, update in place
+          // TODO Actually update in place
+          clearPage();
+          socket.emit('syncRequest');
         }
-        //clearPage();
-        //socket.emit('syncRequest');
       });
 
       socket.on('teamUpdatedFail', function(msg){
@@ -600,9 +618,7 @@
       $('#cueRows').on('click', '.editTeam', function(){
         // Populate edit modal with the data and show it
         console.log('got edit team');
-        $('#editTeamForm')[0].reset();
-        $('#editTeamForm .teamName').val($(this).rel);
-        $('#editModal').modal('show');
+        socket.emit('queryTeam', { _id: $(this).attr('rel')});
       });
 
       $('#cueRows').on('click', '.briefBTN', function(){
@@ -673,6 +689,14 @@
           $('#simArrow').removeClass('glyphicon-arrow-down').addClass('glyphicon-arrow-up');
           $('#simDetails').slideToggle(200);
         }
+      });
+
+      $('.saveChanges').on('click', function(){
+        // Update team
+        socket.emit('updateTeam', { _id: $(this).attr('rel') , update: $('#editTeamForm').serializeJSON()});
+        $('#editTeamForm')[0].reset();
+        $('.saveChanges').attr('rel', '');
+        $('#editModal').modal('hide');
       });
     });
     </script>

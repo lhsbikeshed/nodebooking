@@ -136,13 +136,13 @@ io.on('connection', function(socket){
   });
 
   socket.on('updateTeam', function (team){
-    if(team._id==''){
+    if(team._id=='' || team._id==undefined){
       console.log('error,no team');
       socket.emit('teamUpdatedFail', 'No Team ID');
     }
     else{
       console.log('updating team:');
-      console.log(team._id);
+      console.log(team);
       Booking.findByIdAndUpdate(team._id, team.update, function (err, team){
         if(err){
           console.log(err);
@@ -152,6 +152,28 @@ io.on('connection', function(socket){
           socket.emit('teamUpdatedSuccess', team);
           socket.broadcast.emit('teamUpdated', team);
           console.log('team updated:');
+          console.log(team);
+        }
+      });
+    }
+  });
+
+  socket.on('queryTeam', function (team){
+    if(team._id=='' || team._id==undefined){
+      console.log('error, no team');
+      socket.emit('queryTeamFail', 'No Team ID');
+    }
+    else{
+      console.log('querying team:');
+      console.log(team._id);
+      Booking.findById(team._id, function (err, team){
+        if(err){
+          console.log(err);
+          socket.emit('queryTeamFail', err);
+        }
+        else{
+          socket.emit('queryTeamSuccess', team);
+          console.log('team queried:');
           console.log(team._id);
         }
       });
@@ -161,13 +183,12 @@ io.on('connection', function(socket){
   socket.on('addTeam', function (team){
     if(team!=''){
       console.log('adding team:');
-      // console.log(team.teamName);
-      //team = team + {bookingTime: Date(), status: 0, deathReason: ""};
+      console.log(team.teamName);
       team['bookingTime'] = Date();
       team['status'] = 0;
       team['deathReason'] = "";
       console.log(team);
-      if(team.teamName!='' && team.PilotName!='' && team.TacticalName!='' && team.EngineerName!='' && team.contactEmail!='' && team.contactEmail!=''){
+      if(team.teamName!='' && team.PilotName!='' && team.TacticalName!='' && team.EngineerName!=''){
         Booking.create(team, function (err, team){
           if(err) console.log(err);
           else{
@@ -188,10 +209,10 @@ io.on('connection', function(socket){
   socket.on('patchCall', function (team){
     if(team._id==''){
       console.log('error,no team');
-      socket.emit('patchCallFailed', 'No Team ID');
+      socket.emit('patchCallFail', 'No Team ID');
     }
     else{
-      console.log('patching team:');
+      console.log('looking up team:');
       console.log(team._id);
       Booking.findById(team._id, function (err, team){
         if(err){
@@ -199,27 +220,33 @@ io.on('connection', function(socket){
           socket.emit('patchCallFail', err);
         }
         else{
-          socket.emit('patchCallSuccess', team);
-          console.log('iniating patch for:');
-          console.log(team._id);
-          client.makeCall({
+          if(team.contactNumber=='' || team.contactNumber==undefined){
+            console.log('error, team has no number');
+            socket.emit('patchCallFail', 'Team has no number');
+          }
+          else{
+            socket.emit('patchCallSuccess', team);
+            console.log('iniating patch for:');
+            console.log(team._id);
+            client.makeCall({
 
-              to: '+447733223902', // Any number Twilio can call
-              from: cred.systemNumber, // A number you bought from Twilio and can use for outbound communication
-              url: 'http://twimlets.com/echo?Twiml=%3CResponse%3E%0A%20%20%20%20%3CGather%20timeout%3D%2210%22%20numDigits%3D%221%22%20action%3D%22http%3A%2F%2Ftwimlets.com%2Fecho%3FTwiml%3D%253CResponse%253E%250A%2520%2520%2520%2520%253CSay%253EDialing%2520crew%2520now%252C%2520standby%253C%252FSay%253E%250A%2520%2520%2520%2520%253CDial%253E'+encodeURIComponent(formatTelephoneNumber(team.contactNumber))+'%253C%252FDial%253E%250A%253C%252FResponse%253E%22%3E%0A%3CPause%20length%3D%222%22%2F%3E%20%20%20%20%20%20%20%20%3CSay%3ECall%20will%20be%20patched%20to%20crew%20if%20you%20press%20any%20key%3C%2FSay%3E%0A%20%20%20%20%3C%2FGather%3E%0A%3C%2FResponse%3E&'
+                to: '+447733223902', // Any number Twilio can call
+                from: cred.systemNumber, // A number you bought from Twilio and can use for outbound communication
+                url: 'http://twimlets.com/echo?Twiml=%3CResponse%3E%0A%20%20%20%20%3CGather%20timeout%3D%2210%22%20numDigits%3D%221%22%20action%3D%22http%3A%2F%2Ftwimlets.com%2Fecho%3FTwiml%3D%253CResponse%253E%250A%2520%2520%2520%2520%253CSay%253EDialing%2520crew%2520now%252C%2520standby%253C%252FSay%253E%250A%2520%2520%2520%2520%253CDial%253E'+encodeURIComponent(formatTelephoneNumber(team.contactNumber))+'%253C%252FDial%253E%250A%253C%252FResponse%253E%22%3E%0A%3CPause%20length%3D%222%22%2F%3E%20%20%20%20%20%20%20%20%3CSay%3ECall%20will%20be%20patched%20to%20crew%20if%20you%20press%20any%20key%3C%2FSay%3E%0A%20%20%20%20%3C%2FGather%3E%0A%3C%2FResponse%3E&'
 
-          }, function(err, responseData) {
+            }, function(err, responseData) {
 
-              //executed when the call has been initiated.
-              if(err){
-                console.log('Error!');
-                console.log(err);
-              }
-              else {
-                console.log('Call placed'); // outputs "+14506667788"
-              }
+                //executed when the call has been initiated.
+                if(err){
+                  console.log('Error!');
+                  console.log(err);
+                }
+                else {
+                  console.log('Call placed'); // outputs "+14506667788"
+                }
 
-          });
+            });
+          }
         }
       });
     }
