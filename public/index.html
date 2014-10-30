@@ -278,14 +278,15 @@
             <h4 class="modal-title">Disembark Team</h4>
           </div>
           <div class="modal-body">
-            <form class="form-horizontal" action="javascript: this.preventDefault" id="disembarkTeamForm" autocomplete="off">
+            <form class="form-horizontal" id="disembarkTeamForm" autocomplete="off">
               Death reason:<br/>
-              <textarea name="death" autocomplete="off" class="form-control" placeHolder="dead"></textarea>
+              <textarea name="deathReason" id="deathReasonInput" autocomplete="off" class="form-control" placeHolder="dead"></textarea>
 
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary saveChanges">Disembark</button>
+            <button type="submit" class="btn btn-danger saveChanges">Disembark</button>
+            </form>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
@@ -616,6 +617,7 @@
       // Click handling
       $('#addTeamForm').on('submit', function(event){
         // Get a remove dropdown clicked, find what team for and request removal
+        //if ( event.target.checkValidity && ! event.target.checkValidity()) { return; }
         event.preventDefault();
         console.log('Adding Team');
         socket.emit('addTeam', $('#addTeamForm').serializeJSON());
@@ -677,8 +679,8 @@
         // Got a force disembark request, send an update request
         // TODO
         //   Add pop up warning with input for death reason
-        socket.emit('updateTeam', { _id: $(this).attr('rel'), update: {status: 3, deathReason: 'Dead'}});
-        console.log('updating team: ' + $(this).attr('rel') + ' to status 1');
+        $('#disembarkTeamForm').attr('rel', $(this).attr('rel'));
+        $('#disembarkModal').modal('show');
       });
 
       // Start info hidden
@@ -720,6 +722,16 @@
         $('#editTeamForm')[0].reset();
         $('.saveChanges').attr('rel', '');
         $('#editModal').modal('hide');
+      });
+
+      $('#disembarkTeamForm').on('submit', function(event){
+        // Update team
+        event.preventDefault();
+        socket.emit('updateTeam', { _id: $(this).attr('rel'), update: {status: 3, deathReason: $('#deathReasonInput').val() }});
+        //console.log($('#deathReasonInput').val());
+        $('#disembarkTeamForm')[0].reset();
+        $('#disembarkTeamForm').attr('rel', '');
+        $('#disembarkModal').modal('hide');
       });
 
       $(document).keyup(function(e) {
