@@ -52,7 +52,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use('/audio', express.static(path.join(__dirname, 'public/audio')));
-app.use('/', basicAuth(cred.mainUsername, cred.mainPassword), express.static(path.join(__dirname, 'public')));
 
 var apiRouter = express.Router();
 
@@ -335,6 +334,8 @@ io.on('connection', function(socket){
     }
   });
 });
+
+app.use('/', basicAuth(cred.mainUsername, cred.mainPassword), express.static(path.join(__dirname, 'public')));
 
 http.listen(cred.portNum, function(){
   console.log('listening on *:'+cred.portNum);
