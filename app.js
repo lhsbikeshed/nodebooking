@@ -78,7 +78,7 @@ twilioRouter.route('/autoResponse/:_id')
 
     console.log('got a post');
     console.log('got number: '+responseDigit);
-    res.send(_id);
+    res.send(req.params._id);
     // if(responseDigit>0 && responseDigit<4){
 
     //   Booking.findByIdAndUpdate(req.params._id, { 'briefCheckStatus': responseDigit }, function (err, team){
