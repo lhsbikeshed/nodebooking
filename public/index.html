@@ -344,7 +344,7 @@
                       </button>
                       <ul class="dropdown-menu dropdown-menu-right" role="menu">
                         <!-- <li class="printTicket" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-print"></span>&nbsp; Print Ticket</a></li> -->
-                        <!-- <li class="autoCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; Automated Call</a></li> -->
+                        <li class="autoCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; Automated Call</a></li>
                         <li class="patchCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-earphone"></span>&nbsp; Patch Call</a></li>
                         <li class="editTeam" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Team</a></li>
                         <li class="divider"></li>
@@ -726,6 +726,12 @@
         // Got a brief button click, send an update request
         socket.emit('updateTeam', { _id: $(this).attr('rel'), update: {status: 1}});
         console.log('updating team: ' + $(this).attr('rel') + ' to status 1');
+      });
+
+      $('#cueRows').on('click', '.autoCall', function(){
+        // Got a brief button click, send an update request
+        socket.emit('autoCall', { _id: $(this).attr('rel') });
+        console.log('auto calling: ' + $(this).attr('rel'));
       });
 
       $('#cueRows').on('click', '.patchCall', function(){

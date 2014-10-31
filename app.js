@@ -17,7 +17,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 var basicAuth = require('basic-auth-connect');
-app.use(basicAuth(cred.mainUsername, cred.mainPassword));
+//app.use(basicAuth(cred.mainUsername, cred.mainPassword));
 
 // DB Setup
 mongoose.connect('mongodb://localhost/bookings');
@@ -51,7 +51,8 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/audio', express.static(path.join(__dirname, 'public/audio')));
+app.use('/', basicAuth(cred.mainUsername, cred.mainPassword), express.static(path.join(__dirname, 'public')));
 
 var apiRouter = express.Router();
 
@@ -206,6 +207,52 @@ io.on('connection', function(socket){
         console.log('some feilds missing');
         socket.emit('teamAddedFail', 'Missing input');
       }
+    }
+  });
+
+  socket.on('autoCall', function (team){
+    if(team._id==''){
+      console.log('error,no team');
+      socket.emit('autoCallFail', 'No Team ID');
+    }
+    else{
+      console.log('looking up team:');
+      console.log(team._id);
+      Booking.findById(team._id, function (err, team){
+        if(err){
+          console.log(err);
+          socket.emit('autoCallFail', err);
+        }
+        else{
+          if(team.contactNumber=='' || team.contactNumber==undefined){
+            console.log('error, team has no number');
+            socket.emit('autoCallFail', 'Team has no number');
+          }
+          else{
+            console.log('iniating patch for:');
+            console.log(team._id);
+            client.makeCall({
+
+                to: formatTelephoneNumber(team.contactNumber), // Any number Twilio can call
+                from: cred.systemNumber, // A number you bought from Twilio and can use for outbound communication
+                url: 'http://twimlets.com/echo?Twiml=%3CResponse%3E%0A%3CPlay%3Ehttp%3A%2F%2Fbooking.lhsbikeshed.com%2Faudio%2FbookingNotification-Main.wav%3C%2FPlay%3E%0A%3C%2FResponse%3E&'
+
+            }, function(err, responseData) {
+
+                //executed when the call has been initiated.
+                if(err){
+                  console.log('Error!');
+                  console.log(err);
+                }
+                else {
+                  console.log('Call placed'); // outputs "+14506667788"
+                  io.sockets.emit('alert', 'Automated Call placed for: '+ responseData.to);
+                }
+
+            });
+          }
+        }
+      });
     }
   });
 
