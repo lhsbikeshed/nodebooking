@@ -76,7 +76,9 @@ twilioRouter.route('/autoResponse/:_id')
     // Check post data is in range
     var responseDigit = parseInt(req.body.Digits);
 
+    console.log('got a post');
     console.log('got number: '+responseDigit);
+    res.send(_id);
     // if(responseDigit>0 && responseDigit<4){
 
     //   Booking.findByIdAndUpdate(req.params._id, { 'briefCheckStatus': responseDigit }, function (err, team){
@@ -91,11 +93,11 @@ twilioRouter.route('/autoResponse/:_id')
     // }
   });
 
-twilioRouter.route('/callStatus/:_id')
-  .post(function(req, res) {
-    // Call has ended, check if response has already been made, if not set as no responce and broadcast
+// twilioRouter.route('/callStatus/:_id')
+//   .post(function(req, res) {
+//     // Call has ended, check if response has already been made, if not set as no responce and broadcast
 
-  });
+//   });
 
 
 app.use('/', routes);
