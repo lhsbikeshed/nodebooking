@@ -91,17 +91,17 @@ twilioRouter.route('/autoResponse/:_id')
             console.log(team._id);
           }
         });
-        res.send('<Response><Play>http://booking.lhsbikeshed.com/audio/bookingNotification-3.wav</Play><Hangup/><Response>');
+        res.send('<Response><Play>http://booking.lhsbikeshed.com/audio/bookingNotification-3.wav</Play><Hangup/></Response>');
       }
       else{
         var newCheckStatus = 0;
         if(responseDigit==1) {
           newCheckStatus = 2;
-          res.send('<Response><Play>http://booking.lhsbikeshed.com/audio/bookingNotification-1.wav</Play><Hangup/><Response>');
+          res.send('<Response><Play>http://booking.lhsbikeshed.com/audio/bookingNotification-1.wav</Play><Hangup/></Response>');
         }
         else if(responseDigit==2) {
           newCheckStatus = 3;
-          res.send('<Response><Play>http://booking.lhsbikeshed.com/audio/bookingNotification-2.wav</Play><Hangup/><Response>');
+          res.send('<Response><Play>http://booking.lhsbikeshed.com/audio/bookingNotification-2.wav</Play><Hangup/></Response>');
         }
 
         Booking.findByIdAndUpdate(req.params._id, { 'briefCheckStatus': newCheckStatus }, function (err, team){
