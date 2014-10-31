@@ -115,11 +115,30 @@ twilioRouter.route('/autoResponse/:_id')
     }
   });
 
-// twilioRouter.route('/callStatus/:_id')
-//   .post(function(req, res) {
-//     // Call has ended, check if response has already been made, if not set as no responce and broadcast
-
-//   });
+twilioRouter.route('/callStatus/:_id')
+  .post(function(req, res) {
+    // Call has ended, check if response has already been made, if not set as no responce and broadcast
+    Booking.findById(req.params._id, function (err, team){
+      if(err){
+        console.log(err);
+      }
+      else{
+        if(team.briefCheckStatus==1){
+          Booking.findByIdAndUpdate(team._id, { 'briefCheckStatus': 0 }, function (err, team){
+            if(err){
+              console.log(err);
+            }
+            else{
+              console.log('team updated:');
+              console.log(team);
+              io.sockets.emit('teamUpdated', team);
+            }
+          });
+        }
+      }
+    });
+    res.send(200);
+  });
 
 
 //app.use('/', routes);
