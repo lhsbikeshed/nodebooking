@@ -16,6 +16,9 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+var basicAuth = require('basic-auth-connect');
+app.use(basicAuth(cred.mainUsername, cred.mainPassword));
+
 // DB Setup
 mongoose.connect('mongodb://localhost/bookings');
 var db = mongoose.connection;
