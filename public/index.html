@@ -337,8 +337,8 @@
                   <td style="text-align: right;">
                     <!-- Split button -->
                     <div class="btn-group" style="width:75px;">
-                      <button type="button" class="btn btn-primary btn-sm briefBTN" rel="{{ _id }}">Brief</button>
-                      <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                      <button type="button" class="btn {{ btnClass }} btn-sm briefBTN" rel="{{ _id }}">Brief</button>
+                      <button type="button" class="btn {{ btnClass }} btn-sm dropdown-toggle" data-toggle="dropdown">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
                       </button>
@@ -396,6 +396,11 @@
         // Add team data to new row, pre/append as requested  
         // Get template into handlebar compiler
         var rowTemplate = Handlebars.compile ($("#rowTemplate").html());  
+
+        if(team.briefCheckStatus==0) team["btnClass"] = "btn-primary";
+        else if(team.briefCheckStatus==1) team["btnClass"] = "btn-warning";
+        else if(team.briefCheckStatus==2) team["btnClass"] = "btn-success";
+        else if(team.briefCheckStatus==3) team["btnClass"] = "btn-info";
 
         // Pre or append to list
         if(prepend){
