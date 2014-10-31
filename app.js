@@ -114,7 +114,7 @@ twilioRouter.route('/autoResponse/:_id')
             io.sockets.emit('teamUpdated', team);
           }
         });
-      }      res.send(req.params._id);
+      }
     }
     else{
       res.send('digit not valid');
