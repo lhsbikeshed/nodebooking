@@ -68,6 +68,20 @@ apiRouter.route('/teams')
     });
   });
 
+var twilioRouter = express.Router();
+
+twilioRouter.route('/autoResponse')
+  .post(function(req, res) {
+    // We have had a selection made on the call, return twiml, save in mongodb and broadcast over socket io
+    
+  });
+
+twilioRouter.route('/callStatus')
+  .post(function(req, res) {
+    // Call has ended, check if response has already been made, if not set as no responce and broadcast
+
+  });
+
 
 app.use('/', routes);
 app.use('/api', apiRouter);
@@ -235,7 +249,8 @@ io.on('connection', function(socket){
 
                 to: formatTelephoneNumber(team.contactNumber), // Any number Twilio can call
                 from: cred.systemNumber, // A number you bought from Twilio and can use for outbound communication
-                url: 'http://twimlets.com/echo?Twiml=%3CResponse%3E%0A%3CPlay%3Ehttp%3A%2F%2Fbooking.lhsbikeshed.com%2Faudio%2FbookingNotification-Main.wav%3C%2FPlay%3E%0A%3C%2FResponse%3E&'
+                url: 'http://twimlets.com/echo?Twiml=%3CResponse%3E%0A%20%20%3CGather%20timeout%3D%225%22%20numDigits%3D%221%22%20method%3D%22POST%22%20action%3D%22http%3A%2F%2Fbooking.lhsbikeshed.com%2Ftwilio%2FautoResponse%2F' + team._id + '%22%3E%0A%20%20%20%20%3CPause%20length%3D%221%22%2F%3E%0A%20%20%20%20%3CPlay%3Ehttp%3A%2F%2Fbooking.lhsbikeshed.com%2Faudio%2FbookingNotification-Main.wav%3C%2FPlay%3E%0A%20%20%20%20%3CPause%20length%3D%225%22%2F%3E%0A%20%20%20%20%3CPlay%3Ehttp%3A%2F%2Fbooking.lhsbikeshed.com%2Faudio%2FbookingNotification-Main.wav%3C%2FPlay%3E%0A%20%20%3C%2FGather%3E%0A%20%20%3CHangup%2F%3E%0A%3C%2FResponse%3E&',
+                statusCallback : 'http://booking.lhsbikeshed.com/twilio/callStatus/' + team._id
 
             }, function(err, responseData) {
 
