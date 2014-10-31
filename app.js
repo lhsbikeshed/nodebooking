@@ -70,13 +70,28 @@ apiRouter.route('/teams')
 
 var twilioRouter = express.Router();
 
-twilioRouter.route('/autoResponse')
+twilioRouter.route('/autoResponse/:_id')
   .post(function(req, res) {
     // We have had a selection made on the call, return twiml, save in mongodb and broadcast over socket io
-    
+    // Check post data is in range
+    var responseDigit = parseInt(req.body.Digits);
+
+    console.log('got number: '+responseDigit);
+    // if(responseDigit>0 && responseDigit<4){
+
+    //   Booking.findByIdAndUpdate(req.params._id, { 'briefCheckStatus': responseDigit }, function (err, team){
+    //     if(err){
+    //       console.log(err);
+    //     }
+    //     else{
+    //       console.log('team updated:');
+    //       console.log(team);
+    //     }
+    //   });
+    // }
   });
 
-twilioRouter.route('/callStatus')
+twilioRouter.route('/callStatus/:_id')
   .post(function(req, res) {
     // Call has ended, check if response has already been made, if not set as no responce and broadcast
 
@@ -85,6 +100,7 @@ twilioRouter.route('/callStatus')
 
 app.use('/', routes);
 app.use('/api', apiRouter);
+app.use('/twilio', twilioRouter);
 //app.use('/users', users);
 
 
