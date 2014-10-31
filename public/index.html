@@ -309,8 +309,7 @@
           <div class="modal-body">
             <form class="form-horizontal" id="disembarkTeamForm" autocomplete="off">
               Death reason:<br/>
-              <textarea name="deathReason" id="deathReasonInput" autocomplete="off" class="form-control" placeHolder="dead"></textarea>
-
+              <input type="text" name="deathReason" id="deathReasonInput" autocomplete="off" class="form-control">
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -439,6 +438,11 @@
         $('.cueRow').remove();
       }
 
+      function clearDead(){
+        // Perform a remove() on any items with the class cueRow
+        $('.deadCueRow').remove();
+      }
+
       function addToBrief(team){
         // Set the passed team's name within the span id=briefTeamName
         $('#briefTeamName').html(team.teamName);
@@ -516,6 +520,7 @@
 
       function clearPage(){
         clearCue();
+        clearDead();
         clearBrief();
         clearSim();
       }
