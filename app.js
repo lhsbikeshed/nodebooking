@@ -129,17 +129,19 @@ twilioRouter.route('/callStatus/:_id')
         console.log(err);
       }
       else{
-        if(team.briefCheckStatus==1){
-          Booking.findByIdAndUpdate(team._id, { 'briefCheckStatus': 0 }, function (err, team){
-            if(err){
-              console.log(err);
-            }
-            else{
-              console.log('team updated:');
-              console.log(team);
-              io.sockets.emit('teamUpdated', team);
-            }
-          });
+        if(team!=undefined){
+          if(team.briefCheckStatus==1){
+            Booking.findByIdAndUpdate(team._id, { 'briefCheckStatus': 0 }, function (err, team){
+              if(err){
+                console.log(err);
+              }
+              else{
+                console.log('team updated:');
+                console.log(team);
+                io.sockets.emit('teamUpdated', team);
+              }
+            });
+          }
         }
       }
     });
