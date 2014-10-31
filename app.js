@@ -228,7 +228,6 @@ io.on('connection', function(socket){
             socket.emit('patchCallFail', 'Team has no number');
           }
           else{
-            socket.emit('patchCallSuccess', team);
             console.log('iniating patch for:');
             console.log(team._id);
             client.makeCall({
@@ -246,6 +245,7 @@ io.on('connection', function(socket){
                 }
                 else {
                   console.log('Call placed'); // outputs "+14506667788"
+                  io.sockets.emit('alert', 'Call placed for: '+ responseData.to);
                 }
 
             });

@@ -607,6 +607,10 @@
         displayMsg('Connected To Server', true);
       });
 
+      socket.on('alert', function(alert){
+        displayMsg(alert, true);
+      });
+
       socket.on('teamAdded', function(team){
         processTeam(team);
       });
