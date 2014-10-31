@@ -61,6 +61,7 @@
       <ul class="nav nav-tabs" role="tablist">
         <li rel="overview" class="active" id="overviewTab"><a href="#">Overview</a></li>
         <li rel="addNewTeam"><a href="#">Add a team</a></li>
+        <li rel="deadTeams"><a href="#">Dead Teams</a></li>
         <li rel="settings"><a href="#">Settings</a></li></li>
         <p class="text-right" id="msgArea" class="display: none;" style="padding-top: 5px; font-weight: bold;"></p>
       </ul>
@@ -138,6 +139,34 @@
                 </tr>
               </thead>
               <tbody id="cueRows">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content" id="deadTeams">
+      <div class="container">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">Dead Teams</div>
+            <!-- Table -->
+            <table class="table table-striped table-hover table-condensed">
+              <thead>
+                <tr>
+                  <th>Team Name</th>
+                  <th>Pilot Name</th>
+                  <th>Tactical Name</th>
+                  <th>Engineer Name</th>
+                  <th>Contact Number</th>
+                  <th>Contact Email</th>
+                  <th>Death Reason</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="deadCueRows">
               </tbody>
             </table>
           </div>
@@ -292,10 +321,7 @@
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="javascript/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="javascript/bootstrap.min.js"></script>
     <script src="javascript/handlebars.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
@@ -326,6 +352,20 @@
                         <li class="bg-danger removeTeam" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-remove"></span>&nbsp; Remove Team</a></li>
                       </ul>
                     </div>
+                  </td>
+                </tr>
+    </script>
+    <script id="deadRowTemplate" type="x-handlebars-template">
+                <tr id="deadrow-{{ _id }}" class="deadCueRow">
+                  <td>{{ teamName }}</td>
+                  <td>{{ pilotName }}</td>
+                  <td>{{ tacticalName }}</td>
+                  <td>{{ engineerName }}</td>
+                  <td>{{ contactNumber }}</td>
+                  <td>{{ contactEmail }}</td>
+                  <td>{{ deathReason }}</td>
+                  <td style="text-align: right;">
+                    <button type="button" class="btn btn-danger btn-xs removeDead" rel="{{ _id }}"><span class="glyphicon glyphicon-remove"></span>&nbsp; Remove Team</button>
                   </td>
                 </tr>
     </script>
@@ -368,6 +408,25 @@
         if($('#briefTeamName').html()!=''){
           $('.briefBTN').prop('disabled', true);
         }
+      }
+
+      function addToDead(team, prepend){
+        // Add team data to new row, pre/append as requested  
+        // Get template into handlebar compiler
+        var rowTemplate = Handlebars.compile ($("#deadRowTemplate").html());  
+
+        // Pre or append to list
+        if(prepend){
+          $('#deadCueRows').prepend(rowTemplate(team));
+        }
+        else{
+          $('#deadCueRows').append(rowTemplate(team));
+        }
+      }
+
+      function removeFromDead(team){
+        // Take the _id from the passed team data and use it to search and remove the row
+        $('#deadrow-'+team._id).remove();
       }
 
       function removeFromCue(team){
@@ -467,6 +526,7 @@
           if(teams[i].status == 0) addToCue(teams[i]);
           else if(teams[i].status == 1) addToBrief(teams[i]);
           else if(teams[i].status == 2) addToSim(teams[i]);
+          else if(teams[i].status == 3) addToDead(teams[i], true);
         }
       }
 
@@ -474,10 +534,12 @@
         if(team.status == 0) addToCue(team);
         else if(team.status == 1) addToBrief(team);
         else if(team.status == 2) addToSim(team);
+        else if(team.status == 3) addToDead(team, true);
       }
 
       function removeTeam(team){
         removeFromCue(team);
+        removeFromDead(team);
         if($('.briefBTNCue').attr('rel')==team._id) clearBrief();
         else if($('.simBTNCue').attr('rel')==team._id) clearSim();
       }
@@ -633,6 +695,12 @@
 
       // Click handling
       $('#cueRows').on('click', '.removeTeam', function(){
+        // Get a remove dropdown clicked, find what team for and request removal
+        socket.emit('removeTeam', { _id: $(this).attr('rel')});
+        console.log('removing team:' + $(this).attr('rel'));
+      });
+
+      $('#deadCueRows').on('click', '.removeDead', function(){
         // Get a remove dropdown clicked, find what team for and request removal
         socket.emit('removeTeam', { _id: $(this).attr('rel')});
         console.log('removing team:' + $(this).attr('rel'));
