@@ -8,7 +8,7 @@ var mongoose = require('mongoose');
 var cred = require('./credentials.js');
 var client = require('twilio')(cred.accountSID, cred.authToken);
 
-var routes = require('./routes/index');
+//var routes = require('./routes/index');
 //var users = require('./routes/users');
 
 var app = express();
@@ -36,7 +36,8 @@ var bookingSchema = mongoose.Schema({
     bookingTime: Date,
     status: Number,
     contactEmail: String,
-    deathReason: String
+    deathReason: String,
+    briefCheckStatus: Number
 });
 
 var Booking = mongoose.model('Booking', bookingSchema);
@@ -75,21 +76,43 @@ twilioRouter.route('/autoResponse/:_id')
     // Check post data is in range
     var responseDigit = parseInt(req.body.Digits);
 
-    console.log('got a post');
-    console.log('got number: '+req.body.Digits);
-    res.send(req.params._id);
-    // if(responseDigit>0 && responseDigit<4){
+    if(responseDigit>0 && responseDigit<4){
+      // briefCheckStatus:
+      // 0: nothing happening, 1: team being contacted, 2: team coming, 3: team come later, else remove team
+      // Digit response:
+      // 1: coming now, 2: come later, 3: remove team
 
-    //   Booking.findByIdAndUpdate(req.params._id, { 'briefCheckStatus': responseDigit }, function (err, team){
-    //     if(err){
-    //       console.log(err);
-    //     }
-    //     else{
-    //       console.log('team updated:');
-    //       console.log(team);
-    //     }
-    //   });
-    // }
+      if(responseDigit==3){ // Remove team
+        Booking.findByIdAndRemove(req.params._id, function (err, team){
+          if(err) console.log(err);
+          else{
+            io.sockets.emit('teamRemoved', team);
+            console.log('team removed:');
+            console.log(team._id);
+          }
+        });
+      }
+      else{
+        var newCheckStatus = 0;
+        if(responseDigit==1) newCheckStatus = 2;
+        else if(responseDigit==2) newCheckStatus = 3;
+
+        Booking.findByIdAndUpdate(req.params._id, { 'briefCheckStatus': newCheckStatus }, function (err, team){
+          if(err){
+            console.log(err);
+          }
+          else{
+            console.log('team updated:');
+            console.log(team);
+            io.sockets.emit('teamUpdated', team);
+          }
+        });
+      }
+      res.send(req.params._id);
+    }
+    else{
+      res.send('digit not valid');
+    }
   });
 
 // twilioRouter.route('/callStatus/:_id')
@@ -99,12 +122,12 @@ twilioRouter.route('/autoResponse/:_id')
 //   });
 
 
-app.use('/', routes);
+//app.use('/', routes);
 app.use('/api', apiRouter);
 app.use('/twilio', twilioRouter);
 //app.use('/users', users);
 
-
+app.use('/', basicAuth(cred.mainUsername, cred.mainPassword), express.static(path.join(__dirname, 'public')));
 
 function callCrew(systemNumber, bookingNumber, crewNumber){
   client.makeCall({
@@ -222,6 +245,7 @@ io.on('connection', function(socket){
       team['bookingTime'] = Date();
       team['status'] = 0;
       team['deathReason'] = "";
+      team['briefCheckStatus'] = 0;
       console.log(team);
       if(team.teamName!='' && team.PilotName!='' && team.TacticalName!='' && team.EngineerName!=''){
         Booking.create(team, function (err, team){
@@ -282,6 +306,17 @@ io.on('connection', function(socket){
                 }
 
             });
+            
+            Booking.findByIdAndUpdate(team._id, { 'briefCheckStatus': 1 }, function (err, team){
+              if(err){
+                console.log(err);
+              }
+              else{
+                console.log('team updated:');
+                console.log(team);
+                io.sockets.emit('teamUpdated', team);
+              }
+            });
           }
         }
       });
@@ -335,7 +370,6 @@ io.on('connection', function(socket){
   });
 });
 
-app.use('/', basicAuth(cred.mainUsername, cred.mainPassword), express.static(path.join(__dirname, 'public')));
 
 http.listen(cred.portNum, function(){
   console.log('listening on *:'+cred.portNum);
