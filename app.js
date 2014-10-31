@@ -76,7 +76,7 @@ twilioRouter.route('/autoResponse/:_id')
     var responseDigit = parseInt(req.body.Digits);
 
     console.log('got a post');
-    console.log('got number: '+responseDigit);
+    console.log('got number: '+req.body.Digits);
     res.send(req.params._id);
     // if(responseDigit>0 && responseDigit<4){
 
