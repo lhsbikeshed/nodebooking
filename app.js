@@ -220,6 +220,21 @@ io.on('connection', function(socket){
     }
   });
 
+  socket.on('showWelcome', function (team){
+    console.log('Switching Booking screen to welcome');
+    socket.broadcast.emit('showWelcome');
+  });
+
+  socket.on('showBookingForm', function (team){
+    console.log('Switching Booking screen to form');
+    socket.broadcast.emit('showBookingForm');
+  });
+
+  socket.on('showClosed', function (team){
+    console.log('Switching Booking screen to closed');
+    socket.broadcast.emit('showClosed');
+  });
+
   socket.on('updateTeam', function (team){
     if(team._id=='' || team._id==undefined){
       console.log('error,no team');

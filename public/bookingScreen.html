@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Team booking Terminal</title>
+
+    <!-- Bootstrap -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="stylesheets/bootstrap-theme.min.css">
+    <link href="stylesheets/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="stylesheets/stylesheetfonts	.css" type="text/css" charset="utf-8" />
+
+    <style type="text/css">
+
+    .content{
+      display:none;
+    }
+
+    .content.active{
+      display:block;
+    }
+
+    .wrapper{padding-bottom:50px;}
+    .header{background:#000000;}
+    .header .container{padding-bottom:20px;}
+    .header .container h1{color:#FFF;line-height:50px;margin-top:30px;margin-bottom:0;}
+    .header .container h3{color:#E0E0E0;font-size:16px;margin-top:-5px;}
+    .header .container h3 a{color:#66aacc;}
+    .header .container h3 a:hover{color:#b3d5e6;}
+    .top-menu{position:absolute;z-index:9999;}
+    .top-menu .nav-list{background:rgba(255, 255, 255, 0.8);border:1px solid #CCC;margin:20px;position:fixed;right:0;}
+    pre,.well{background:#FFFFFF;}
+    
+    .syntax-container{background:#FCFCFC;-webkit-border-radius:7px;-webkit-background-clip:padding-box;-moz-border-radius:7px;-moz-background-clip:padding;border-radius:7px;background-clip:padding-box;border:1px solid #e3e3e3;margin-bottom:30px;padding-bottom:20px;}
+
+    .isloading-wrapper.isloading-right{margin-left:10px;}
+
+    .isloading-overlay{position:relative;text-align:center;}
+
+    .isloading-overlay .isloading-wrapper{background:#FFFFFF;-webkit-border-radius:7px;-webkit-background-clip:padding-box;-moz-border-radius:7px;-moz-background-clip:padding;border-radius:7px;background-clip:padding-box;display:inline-block;margin:0 auto;padding:10px 20px;top:30%;z-index:9000;}
+
+    </style>
+
+    <style type="text/css">
+					body{
+				font-family: 'eurostilesteextdblaregular';
+				background-color: #000000;
+							}
+					.panel{
+						background-color: #000000
+					}
+		</style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="col-md-12">
+      &nbsp;
+    </div>
+
+    <div class="content" id="welcome">
+      <div class="container">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="panel panel-default">
+            <center>
+            	<span style="color: #00FF00; font-size: 60px;">BOOKING TERMINAL</span><br />
+            	<br />
+            	<span style="color: #23B023; font-size: 40px;">SPEAK TO A RECRUITMENT OFFICER TO BOOK YOUR TRAINING SESSION TODAY</span><br />
+            	<br />
+            </center>
+          	<span style="color: #23B023; font-size: 40px;">Requirements:</span><br />
+          	<span style="color: #23B023; font-size: 40px;">&nbsp;&nbsp;&nbsp;Minimum age strictly 14</span><br />
+          	<span style="color: #23B023; font-size: 40px;">&nbsp;&nbsp;&nbsp;3 crew members needed</span><br />
+          	<span style="color: #23B023; font-size: 40px;">&nbsp;&nbsp;&nbsp;Contactable by phone</span><br />
+          	<br />
+          	<span style="color: #23B023; font-size: 40px;">Inform Recruiter if you suffer from asthma or photosensitive epilepsy</span><br />
+          	<br />
+          	<center>
+  	        	<span style="color: #23B023; font-size: 20px;">Space corps cannot guarantee your safety on interplanetary flights.</span>
+  	        </center>
+          </div>
+        </div>
+    	</div>
+    </div>	
+
+    <div class="content" id="closed">
+      <div class="container">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="panel panel-default">
+            <center>
+            	<span style="color: #00FF00; font-size: 60px;">BOOKING TERMINAL</span><br />
+              <br />
+              <br />
+              <br />
+              <br />
+              <br />
+            	<span style="color: #23B023; font-size: 35px;">BOOKING NOW CLOSED FOR THIS EVENT</span><br />
+            	<span style="color: #23B023; font-size: 35px;">FOLLOW @LHSBIKESHED FOR UPDATES</span><br />
+            	<br />
+            </center>
+          </div>
+        </div>
+      </div>
+    </div>	
+
+
+    <div class="content active" id="addNewTeam">
+      <div class="container">
+        <div class="col-md-12">
+        <center>
+            <span style="color: #00FF00; font-size: 60px;">BOOKING TERMINAL</span><br />
+        </center>
+        <br />
+        <br />
+        <br />
+        <br />
+          <form class="form-horizontal" id="addTeamForm" autocomplete="off">
+            <div class="form-group">
+                <label for="inputEmail" style="color: #00FF00;" class="control-label col-xs-3">Team Name</label>
+                <div class="col-xs-8">
+                    <input required type="text" style="background-color: #000000; color: #00FF00;"  class="form-control" name="teamName" placeholder="Team Name" autocomplete="off" id="teamName">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail" style="color: #00FF00;" class="control-label col-xs-3">Pilot Name</label>
+                <div class="col-xs-8">
+                    <input required type="text" style="background-color: #000000; color: #00FF00;" class="form-control" name="pilotName" placeholder="Pilot First Name" autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail" style="color: #00FF00;" class="control-label col-xs-3">Tactical Name</label>
+                <div class="col-xs-8">
+                    <input required type="text" style="background-color: #000000; color: #00FF00;" class="form-control" name="tacticalName" placeholder="Tactical First Name" autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail" style="color: #00FF00;" class="control-label col-xs-3">Engineer Name</label>
+                <div class="col-xs-8">
+                    <input required type="text" style="background-color: #000000; color: #00FF00;" class="form-control" name="engineerName" placeholder="Engineer First Name" autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail" style="color: #00FF00;" class="control-label col-xs-3">Contact Number</label>
+                <div class="col-xs-8">
+                    <input type="tel" pattern="[0-9]+" style="background-color: #000000; color: #00FF00;" class="form-control" name="contactNumber" placeholder="Contact Number" autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail" style="color: #00FF00;" class="control-label col-xs-3">Contact Email</label>
+                <div class="col-xs-8">
+                    <input type="email" class="form-control" style="background-color: #000000; color: #00FF00;" name="contactEmail" placeholder="Contact Email" autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-offset-2 col-xs-10">
+                    <button type="submit" class="btn btn-primary" id="addTeamFormBTN">Register Team</button>
+                </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    
+
+    <script src="javascript/jquery.min.js"></script>
+    <script src="javascript/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/javascript/jquery.isloading.js"></script>
+    <script src="/javascript/jquery.serializejson.min.js"></script>
+    <script type="text/javascript">
+    $(function(){
+      //Diry tab selection code, FIXME
+
+      $('.nav-tabs li').on('click', function(){
+        $('.nav-tabs li.active').removeClass('active');
+        $(this).addClass('active');
+        
+        var contentToShow = $(this).attr('rel');
+
+        $('.content.active').hide().removeClass('active');
+        $('#'+contentToShow).show().addClass('active');
+      });
+    });
+    </script>
+
+    <script type="text/javascript">
+    $.isLoading({ text: "Connecting to server &nbsp;" });
+    $(function(){
+      
+      function displayMsg(msg, good){
+        if(good){
+          console.log('displaying msg');
+          $('#msgArea').addClass('text-success').html(msg).show().delay(3000).fadeOut(400, function(){
+            $(this).html('').removeClass('text-success');
+          });
+        }
+        else{
+          console.log('displaying msg');
+          $('#msgArea').addClass('text-danger').html(msg).show().delay(3000).fadeOut(400, function(){
+            $(this).html('').removeClass('text-danger');
+          });
+        }
+      }
+
+      var socket = io();
+
+      socket.on('connect', function(){
+        // We have connected over the socket, clear the page and request a full refresh
+        $.isLoading( "hide" );
+      });
+
+      socket.on('reconnecting', function(){
+        // Lost connection, show connecting spinner
+        $.isLoading( "hide" );
+        $.isLoading({ text: "Connecting to server &nbsp;" });
+      });
+
+      socket.on('teamAddedSuccess', function(team){
+        processTeam(team);
+        displayMsg('Team Added', true);
+      });
+
+      socket.on('teamAddedFail', function(msg){
+        displayMsg('Failed to add team: ' + msg, false);
+      });
+
+      socket.on('showBookingForm', function(msg){
+        $('.content.active').hide().removeClass('active');
+        $('#addNewTeam').show().addClass('active');
+        document.getElementById("teamName").focus();
+      });
+
+      socket.on('showWelcome', function(msg){
+        $('.content.active').hide().removeClass('active');
+        $('#welcome').show().addClass('active');
+      });
+
+      socket.on('showClosed', function(msg){
+        $('.content.active').hide().removeClass('active');
+        $('#closed').show().addClass('active');
+      });
+
+      // Click handling
+      $('#addTeamForm').on('submit', function(event){
+        // Get a remove dropdown clicked, find what team for and request removal
+        //if ( event.target.checkValidity && ! event.target.checkValidity()) { return; }
+        event.preventDefault();
+        console.log('Adding Team');
+        socket.emit('addTeam', $('#addTeamForm').serializeJSON());
+        console.log($('#addTeamForm').serializeJSON());
+        $('#addTeamForm')[0].reset();
+        $('.content.active').hide().removeClass('active');
+        $('#welcome').show().addClass('active');
+      });
+
+      $(document).keyup(function(e) {
+        if (e.keyCode == 27) { 
+          // Close all modals
+          $('.modal').modal('hide');
+        }   // esc
+      });
+    });
+    </script>
+  </body>
+</html>

@@ -76,6 +76,21 @@
         <div class="col-md-4 col-sm-12 col-xs-12 pull-right">
           <div class="panel panel-default">
             <!-- Default panel contents -->
+            <div class="panel-heading">Booking Screen Control</div>
+            <div class="panel-body">
+              <div class="text-center">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-primary welcomeScreen" rel="">Welcome</button>
+                  <button type="button" class="btn btn-success bookingFormScreen" rel="">Booking form</span></button>
+                  <button type="button" class="btn btn-danger closedScreen" rel="">Booking closed</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="panel panel-default">
+            <!-- Default panel contents -->
             <div class="panel-heading">Simulator</div>
             <div class="panel-body">
               <p><strong>Team:</strong> <span id="simTeamName"></span></p>
@@ -769,6 +784,23 @@
         //   Add pop up warning with input for death reason
         $('#disembarkTeamForm').attr('rel', $(this).attr('rel'));
         $('#disembarkModal').modal('show');
+      });
+
+
+
+      $('.welcomeScreen').on('click', function(){
+        // Got a return to cue button for the sim, send an update request
+        socket.emit('showWelcome');
+      });
+
+      $('.bookingFormScreen').on('click', function(){
+        // Got a return to cue button for the sim, send an update request
+        socket.emit('showBookingForm');
+      });
+
+      $('.closedScreen').on('click', function(){
+        // Got a return to cue button for the sim, send an update request
+        socket.emit('showClosed');
       });
 
       // Start info hidden
