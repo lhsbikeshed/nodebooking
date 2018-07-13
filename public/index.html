@@ -8,10 +8,11 @@
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
 
     <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="stylesheets/bootstrap-theme.min.css">
+    <link href="stylesheets/font-awesome.css" rel="stylesheet">
 
     <style type="text/css">
 
@@ -22,6 +23,25 @@
     .content.active{
       display:block;
     }
+
+    .wrapper{padding-bottom:50px;}
+    .header{background:#000000;}
+    .header .container{padding-bottom:20px;}
+    .header .container h1{color:#FFF;line-height:50px;margin-top:30px;margin-bottom:0;}
+    .header .container h3{color:#E0E0E0;font-size:16px;margin-top:-5px;}
+    .header .container h3 a{color:#66aacc;}
+    .header .container h3 a:hover{color:#b3d5e6;}
+    .top-menu{position:absolute;z-index:9999;}
+    .top-menu .nav-list{background:rgba(255, 255, 255, 0.8);border:1px solid #CCC;margin:20px;position:fixed;right:0;}
+    pre,.well{background:#FFFFFF;}
+    
+    .syntax-container{background:#FCFCFC;-webkit-border-radius:7px;-webkit-background-clip:padding-box;-moz-border-radius:7px;-moz-background-clip:padding;border-radius:7px;background-clip:padding-box;border:1px solid #e3e3e3;margin-bottom:30px;padding-bottom:20px;}
+
+    .isloading-wrapper.isloading-right{margin-left:10px;}
+
+    .isloading-overlay{position:relative;text-align:center;}
+
+    .isloading-overlay .isloading-wrapper{background:#FFFFFF;-webkit-border-radius:7px;-webkit-background-clip:padding-box;-moz-border-radius:7px;-moz-background-clip:padding;border-radius:7px;background-clip:padding-box;display:inline-block;margin:0 auto;padding:10px 20px;top:30%;z-index:9000;}
 
     </style>
 
@@ -39,9 +59,11 @@
 
     <div class="container">
       <ul class="nav nav-tabs" role="tablist">
-        <li rel="overview" class="active"><a href="#">Overview</a></li>
+        <li rel="overview" class="active" id="overviewTab"><a href="#">Overview</a></li>
         <li rel="addNewTeam"><a href="#">Add a team</a></li>
-        <li rel="settings"><a href="#">Settings</a></li>
+        <li rel="deadTeams"><a href="#">Dead Teams</a></li>
+        <li rel="settings"><a href="#">Settings</a></li></li>
+        <p class="text-right" id="msgArea" class="display: none;" style="padding-top: 5px; font-weight: bold;"></p>
       </ul>
     </div>
 
@@ -49,30 +71,41 @@
       &nbsp;
     </div>
 
-    <div class="container">
-      <div class="col-md-12">
-        <div class="alertArea">
-          <div class="alert alert-warning alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <strong>Warning!</strong> Something went wrong!
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="content active" id="overview">
       <div class="container">
         <div class="col-md-4 col-sm-12 col-xs-12 pull-right">
           <div class="panel panel-default">
             <!-- Default panel contents -->
-            <div class="panel-heading">Simulator</div>
+            <div class="panel-heading">Booking Screen Control</div>
             <div class="panel-body">
-              <p><strong>Team:</strong> <span class="briefTeamName">The mother huggers</span></p>
               <div class="text-center">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-primary">Cue</button>
-                  <button type="button" class="btn btn-info">View details</button>
-                  <button type="button" class="btn btn-danger">Disembark</button>
+                  <button type="button" class="btn btn-primary welcomeScreen" rel="">Welcome</button>
+                  <button type="button" class="btn btn-success bookingFormScreen" rel="">Booking form</span></button>
+                  <button type="button" class="btn btn-danger closedScreen" rel="">Booking closed</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">Simulator</div>
+            <div class="panel-body">
+              <p><strong>Team:</strong> <span id="simTeamName"></span></p>
+              <p id="simDetails">
+                <b>Pilot: </b><span id="simPilotName"></span><br />
+                <b>Tactical: </b><span id="simTacticalName"></span><br />
+                <b>Enineering: </b><span id="simEngineeringName"></span><br />
+                <b>Phone: </b><span id="simPhone"></span><br />
+                <b>Email: </b><span id="simEmail"></span><br />
+              </p>
+              <div class="text-center">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-primary simBTNCue simRoomBTN" rel="">Cue</button>
+                  <button type="button" class="btn btn-info simBTNView simRoomBTN" rel="">Details <span id="simArrow" class="glyphicon glyphicon-arrow-down"></span></button>
+                  <button type="button" class="btn btn-danger simBTNDisembark simRoomBTN" rel="">Disembark</button>
                 </div>
               </div>
             </div>
@@ -83,12 +116,19 @@
             <!-- Default panel contents -->
             <div class="panel-heading">Briefing Room</div>
             <div class="panel-body">
-              <p><strong>Team:</strong> <span class="briefTeamName">Russ and his merry men</span></p>
+              <p><strong>Team:</strong> <span id="briefTeamName"></span></p>
+              <p id="briefDetails">
+                <b>Pilot: </b><span id="briefPilotName"></span><br />
+                <b>Tactical: </b><span id="briefTacticalName"></span><br />
+                <b>Enineering: </b><span id="briefEngineeringName"></span><br />
+                <b>Phone: </b><span id="briefPhone"></span><br />
+                <b>Email: </b><span id="briefEmail"></span><br />
+              </p>
               <div class="text-center">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-primary">Cue</button>
-                  <button type="button" class="btn btn-info">View details</button>
-                  <button type="button" class="btn btn-success" disabled="disabled">Embark</button>
+                  <button type="button" class="btn btn-primary briefBTNCue briefRoomBTN" rel="">Cue</button>
+                  <button type="button" class="btn btn-info briefBTNView briefRoomBTN" rel="">Details <span id="briefArrow" class="glyphicon glyphicon-arrow-down"></span></button>
+                  <button type="button" class="btn btn-success briefBTNEmbark briefRoomBTN" rel="">Embark</button>
                 </div>
               </div>
             </div>
@@ -99,7 +139,7 @@
         <div class="col-md-8 col-sm-12 col-xs-12 pull-left">
           <div class="panel panel-default">
             <!-- Default panel contents -->
-            <div class="panel-heading">Currently cueing</div>
+            <div class="panel-heading">Currently Queuing</div>
             <!-- Table -->
             <table class="table table-striped table-hover table-condensed">
               <thead>
@@ -113,59 +153,35 @@
                   <th></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="cueRows">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content" id="deadTeams">
+      <div class="container">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">Dead Teams</div>
+            <!-- Table -->
+            <table class="table table-striped table-hover table-condensed">
+              <thead>
                 <tr>
-                  <td>Great team</td>
-                  <td>Tom</td>
-                  <td>Tim</td>
-                  <td>Charles</td>
-                  <td>07733223902</td>
-                  <td>08/10 10:45</td>
-                  <td style="text-align: right;">
-                    <!-- Split button -->
-                    <div class="btn-group" style="width:75px;">
-                      <button type="button" class="btn btn-primary btn-sm" disabled="disabled">Brief</button>
-                      <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                        <span class="caret"></span>
-                        <span class="sr-only">Toggle Dropdown</span>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                        <li><a href="#"><span class="glyphicon glyphicon-print"></span>&nbsp; Print Ticket</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; Automated Call</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-earphone"></span>&nbsp; Patch Call</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Team</a></li>
-                        <li class="divider"></li>
-                        <li class="bg-danger"><a href="#"><span class="glyphicon glyphicon-remove"></span>&nbsp; Remove Team</a></li>
-                      </ul>
-                    </div>
-                  </td>
+                  <th>Team Name</th>
+                  <th>Pilot Name</th>
+                  <th>Tactical Name</th>
+                  <th>Engineer Name</th>
+                  <th>Contact Number</th>
+                  <th>Contact Email</th>
+                  <th>Death Reason</th>
+                  <th></th>
                 </tr>
-                <tr>
-                  <td>AMAZING team</td>
-                  <td>Dick</td>
-                  <td>Dom</td>
-                  <td>Diddles</td>
-                  <td>07735523902</td>
-                  <td>08/10 10:55</td>
-                  <td style="text-align: right;">
-                    <!-- Split button -->
-                    <div class="btn-group" style="width:75px">
-                      <button type="button" class="btn btn-primary btn-sm" disabled="disabled">Brief</button>
-                      <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                        <span class="caret"></span>
-                        <span class="sr-only">Toggle Dropdown</span>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                        <li><a href="#"><span class="glyphicon glyphicon-print"></span>&nbsp; Print Ticket</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; Automated Call</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-earphone"></span>&nbsp; Patch call through</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit team</a></li>
-                        <li class="divider"></li>
-                        <li class="bg-danger"><a href="#"><span class="glyphicon glyphicon-remove"></span>&nbsp; Remove Team</a></li>
-                      </ul>
-                    </div>
-                  </td>
-                </tr>
+              </thead>
+              <tbody id="deadCueRows">
               </tbody>
             </table>
           </div>
@@ -176,46 +192,46 @@
     <div class="content" id="addNewTeam">
       <div class="container">
         <div class="col-md-12">
-          <form class="form-horizontal" action="javascript: this.preventDefault">
+          <form class="form-horizontal" id="addTeamForm" autocomplete="off">
             <div class="form-group">
                 <label for="inputEmail" class="control-label col-xs-3">Team Name</label>
                 <div class="col-xs-8">
-                    <input type="text" class="form-control" id="inputTeamName" placeholder="Team Name">
+                    <input required type="text" class="form-control" name="teamName" placeholder="Team Name" autocomplete="off">
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputEmail" class="control-label col-xs-3">Pilot Name</label>
                 <div class="col-xs-8">
-                    <input type="text" class="form-control" id="inputTeamName" placeholder="Pilot Name">
+                    <input required type="text" class="form-control" name="pilotName" placeholder="Pilot Name" autocomplete="off">
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputEmail" class="control-label col-xs-3">Tactical Name</label>
                 <div class="col-xs-8">
-                    <input type="text" class="form-control" id="inputTeamName" placeholder="Tactical Name">
+                    <input required type="text" class="form-control" name="tacticalName" placeholder="Tactical Name" autocomplete="off">
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputEmail" class="control-label col-xs-3">Engineer Name</label>
                 <div class="col-xs-8">
-                    <input type="text" class="form-control" id="inputTeamName" placeholder="Engineer Name">
+                    <input required type="text" class="form-control" name="engineerName" placeholder="Engineer Name" autocomplete="off">
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputEmail" class="control-label col-xs-3">Contact Number</label>
                 <div class="col-xs-8">
-                    <input type="number" class="form-control" pattern="[0-9]*" id="inputTeamName" placeholder="Contact Number">
+                    <input type="tel" pattern="[0-9]+" class="form-control" name="contactNumber" placeholder="Contact Number" autocomplete="off">
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputEmail" class="control-label col-xs-3">Contact Email</label>
                 <div class="col-xs-8">
-                    <input type="email" class="form-control" id="inputTeamName" placeholder="Contact Email">
+                    <input type="email" class="form-control" name="contactEmail" placeholder="Contact Email" autocomplete="off">
                 </div>
             </div>
             <div class="form-group">
                 <div class="col-xs-offset-2 col-xs-10">
-                    <button type="submit" class="btn btn-primary">Register Team</button>
+                    <button type="submit" class="btn btn-primary" id="addTeamFormBTN">Register Team</button>
                 </div>
             </div>
           </form>
@@ -230,7 +246,7 @@
             <div class="form-group">
                 <label for="inputEmail" class="control-label col-xs-3">Patch Call Number</label>
                 <div class="col-xs-8">
-                    <input type="number" pattern="[0-9]*" class="form-control" id="inputPatchNumber" placeholder="Patch Call Number">
+                    <input type="tel" pattern="[0-9]+" class="form-control" id="inputPatchNumber" placeholder="Patch Call Number">
                 </div>
             </div>
             <div class="form-group">
@@ -243,11 +259,130 @@
       </div>
     </div>
 
+    <div class="modal fade" id="editModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Edit Team</h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal" action="javascript: this.preventDefault" id="editTeamForm" autocomplete="off">
+              <div class="form-group">
+                  <label for="inputEmail" class="control-label col-xs-3">Team Name</label>
+                  <div class="col-xs-8">
+                      <input required type="text" class="form-control" name="teamName" placeholder="Team Name" autocomplete="off">
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label for="inputEmail" class="control-label col-xs-3">Pilot Name</label>
+                  <div class="col-xs-8">
+                      <input required type="text" class="form-control" name="pilotName" placeholder="Pilot Name" autocomplete="off">
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label for="inputEmail" class="control-label col-xs-3">Tactical Name</label>
+                  <div class="col-xs-8">
+                      <input required type="text" class="form-control" name="tacticalName" placeholder="Tactical Name" autocomplete="off">
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label for="inputEmail" class="control-label col-xs-3">Engineer Name</label>
+                  <div class="col-xs-8">
+                      <input required type="text" class="form-control" name="engineerName" placeholder="Engineer Name" autocomplete="off">
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label for="inputEmail" class="control-label col-xs-3">Contact Number</label>
+                  <div class="col-xs-8">
+                      <input type="tel" pattern="[0-9]+" class="form-control" name="contactNumber" placeholder="Contact Number" autocomplete="off">
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label for="inputEmail" class="control-label col-xs-3">Contact Email</label>
+                  <div class="col-xs-8">
+                      <input type="email" class="form-control" name="contactEmail" placeholder="Contact Email" autocomplete="off">
+                  </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary saveChanges">Save changes</button>
+            </div>
+          </form>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <div class="modal fade" id="disembarkModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Disembark Team</h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal" id="disembarkTeamForm" autocomplete="off">
+              Death reason:<br/>
+              <input type="text" name="deathReason" id="deathReasonInput" autocomplete="off" class="form-control">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-danger saveChanges">Disembark</button>
+            </form>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <script src="javascript/jquery.min.js"></script>
+    <script src="javascript/bootstrap.min.js"></script>
+    <script src="javascript/handlebars.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/javascript/jquery.isloading.js"></script>
+    <script src="/javascript/jquery.serializejson.min.js"></script>
+    <script id="rowTemplate" type="x-handlebars-template">
+                <tr id="row-{{ _id }}" class="cueRow">
+                  <td>{{ teamName }}</td>
+                  <td>{{ pilotName }}</td>
+                  <td>{{ tacticalName }}</td>
+                  <td>{{ engineerName }}</td>
+                  <td>{{ contactNumber }}</td>
+                  <td>{{ bookingTime }}</td>
+                  <td style="text-align: right;">
+                    <!-- Split button -->
+                    <div class="btn-group" style="width:75px;">
+                      <button type="button" class="btn {{ btnClass }} btn-sm briefBTN" rel="{{ _id }}">Brief</button>
+                      <button type="button" class="btn {{ btnClass }} btn-sm dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                        <!-- <li class="printTicket" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-print"></span>&nbsp; Print Ticket</a></li> -->
+                        <li class="autoCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-phone-alt"></span>&nbsp; Automated Call</a></li>
+                        <li class="patchCall" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-earphone"></span>&nbsp; Patch Call</a></li>
+                        <li class="editTeam" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Team</a></li>
+                        <li class="divider"></li>
+                        <li class="bg-danger removeTeam" rel="{{ _id }}"><a href="#"><span class="glyphicon glyphicon-remove"></span>&nbsp; Remove Team</a></li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+    </script>
+    <script id="deadRowTemplate" type="x-handlebars-template">
+                <tr id="deadrow-{{ _id }}" class="deadCueRow">
+                  <td>{{ teamName }}</td>
+                  <td>{{ pilotName }}</td>
+                  <td>{{ tacticalName }}</td>
+                  <td>{{ engineerName }}</td>
+                  <td>{{ contactNumber }}</td>
+                  <td>{{ contactEmail }}</td>
+                  <td>{{ deathReason }}</td>
+                  <td style="text-align: right;">
+                    <button type="button" class="btn btn-danger btn-xs removeDead" rel="{{ _id }}"><span class="glyphicon glyphicon-remove"></span>&nbsp; Remove Team</button>
+                  </td>
+                </tr>
+    </script>
 
     <script type="text/javascript">
     $(function(){
@@ -265,5 +400,467 @@
     });
     </script>
 
+    <script type="text/javascript">
+    $.isLoading({ text: "Connecting to server &nbsp;" });
+    $(function(){
+      //Diry tab selection code, FIXME
+       var theTemplateScript = $("#rowTemplate").html();  
+      var theTemplate = Handlebars.compile (theTemplateScript);  
+
+      function addToCue(team, prepend){
+        // Add team data to new row, pre/append as requested  
+        // Get template into handlebar compiler
+        var rowTemplate = Handlebars.compile ($("#rowTemplate").html());  
+
+        if(team.briefCheckStatus==0) team["btnClass"] = "btn-primary";
+        else if(team.briefCheckStatus==1) team["btnClass"] = "btn-warning";
+        else if(team.briefCheckStatus==2) team["btnClass"] = "btn-success";
+        else if(team.briefCheckStatus==3) team["btnClass"] = "btn-info";
+
+        // Pre or append to list
+        if(prepend){
+          $('#cueRows').prepend(rowTemplate(team));
+        }
+        else{
+          $('#cueRows').append(rowTemplate(team));
+        }
+        if($('#briefTeamName').html()!=''){
+          $('.briefBTN').prop('disabled', true);
+        }
+      }
+
+      function addToDead(team, prepend){
+        // Add team data to new row, pre/append as requested  
+        // Get template into handlebar compiler
+        var rowTemplate = Handlebars.compile ($("#deadRowTemplate").html());  
+
+        // Pre or append to list
+        if(prepend){
+          $('#deadCueRows').prepend(rowTemplate(team));
+        }
+        else{
+          $('#deadCueRows').append(rowTemplate(team));
+        }
+      }
+
+      function removeFromDead(team){
+        // Take the _id from the passed team data and use it to search and remove the row
+        $('#deadrow-'+team._id).remove();
+      }
+
+      function removeFromCue(team){
+        // Take the _id from the passed team data and use it to search and remove the row
+        $('#row-'+team._id).remove();
+      }
+
+      function clearCue(){
+        // Perform a remove() on any items with the class cueRow
+        $('.cueRow').remove();
+      }
+
+      function clearDead(){
+        // Perform a remove() on any items with the class cueRow
+        $('.deadCueRow').remove();
+      }
+
+      function addToBrief(team){
+        // Set the passed team's name within the span id=briefTeamName
+        $('#briefTeamName').html(team.teamName);
+        $('#briefPilotName').html(team.pilotName);
+        $('#briefTacticalName').html(team.tacticalName);
+        $('#briefEngineeringName').html(team.engineerName);
+        $('#briefPhone').html(team.contactNumber);
+        $('#briefEmail').html(team.contactEmail);
+
+        $('.briefBTN').prop('disabled', true);
+        $('.briefBTNCue').prop('disabled', false).attr('rel', team._id);
+        $('.briefBTNView').prop('disabled', false).attr('rel', team._id);
+        if($('#simTeamName').html()==''){
+          $('.briefBTNEmbark').prop('disabled', false).attr('rel', team._id);
+        }
+        else {
+          $('.briefBTNEmbark').prop('disabled', true).attr('rel', team._id);
+        }
+      }
+
+      function clearBrief(){
+        // Clear the team name within the span id=briefTeamName
+        console.log('clear brief request');
+        $('#briefTeamName').html('');
+        $('#briefPilotName').html('');
+        $('#briefTacticalName').html('');
+        $('#briefEngineeringName').html('');
+        $('#briefPhone').html('');
+        $('#briefEmail').html('');
+        $('.briefBTN').prop('disabled', false);
+        $('.briefBTNCue').prop('disabled', false).attr('rel', '');
+        $('.briefRoomBTN').prop('disabled', true).attr('rel', '');
+        $('.briefBTNEmbark').prop('disabled', true).attr('rel', '');
+
+        $('#briefArrow').removeClass('glyphicon-arrow-up').addClass('glyphicon-arrow-down');
+        $('#briefDetails').hide();
+      }
+
+      function addToSim(team){
+        // Set the passed team's name within the span id=simTeamName
+        $('#simTeamName').html(team.teamName);
+        $('#simPilotName').html(team.pilotName);
+        $('#simTacticalName').html(team.tacticalName);
+        $('#simEngineeringName').html(team.engineerName);
+        $('#simPhone').html(team.contactNumber);
+        $('#simEmail').html(team.contactEmail);
+
+        $('.simRoomBTN').prop('disabled', false).attr('rel', team._id);
+        if($('#briefTeamName').html()!=''){
+          $('.briefBTNEmbark').prop('disabled', true);
+        }
+      }
+
+      function clearSim(){
+        // Clear the team name within the span id=simTeamName
+        console.log('clear sim request');
+        $('#simTeamName').html('');
+        $('#simPilotName').html('');
+        $('#simTacticalName').html('');
+        $('#simEngineeringName').html('');
+        $('#simPhone').html('');
+        $('#simEmail').html('');
+
+        $('.simRoomBTN').prop('disabled', true).attr('rel', '');
+        if($('#briefTeamName').html()==''){
+          $('.briefBTNEmbark').prop('disabled', true);
+        }
+        else {
+          $('.briefBTNEmbark').prop('disabled', false);
+        }
+
+        $('#simArrow').removeClass('glyphicon-arrow-up').addClass('glyphicon-arrow-down');
+        $('#simDetails').hide();
+      }
+
+      function clearPage(){
+        clearCue();
+        clearDead();
+        clearBrief();
+        clearSim();
+      }
+
+      function processTeams(teams){
+        // Itterate over all passed teams and pass on to correct runctions for placement on page
+        for(var i = 0; i<teams.length; i++){
+          if(teams[i].status == 0) addToCue(teams[i]);
+          else if(teams[i].status == 1) addToBrief(teams[i]);
+          else if(teams[i].status == 2) addToSim(teams[i]);
+          else if(teams[i].status == 3) addToDead(teams[i], true);
+        }
+      }
+
+      function processTeam(team){
+        if(team.status == 0) addToCue(team);
+        else if(team.status == 1) addToBrief(team);
+        else if(team.status == 2) addToSim(team);
+        else if(team.status == 3) addToDead(team, true);
+      }
+
+      function removeTeam(team){
+        removeFromCue(team);
+        removeFromDead(team);
+        if($('.briefBTNCue').attr('rel')==team._id) clearBrief();
+        else if($('.simBTNCue').attr('rel')==team._id) clearSim();
+      }
+
+      function findCurrentState(team){
+        if($('#row-'+team._id).length){
+          // Exists in cue
+          return 0;
+        }
+        else if($('.briefBTNCue').attr('rel')==team._id){
+          // Currently in brief
+          return 1;
+        }
+        else if($('.simBTNCue').attr('rel')==team._id){
+          // Currently in sim
+          return 2;
+        }
+        else{
+          // Currently nowhere
+          return 3;
+        }
+      }
+
+      function displayMsg(msg, good){
+        if(good){
+          console.log('displaying msg');
+          $('#msgArea').addClass('text-success').html(msg).show().delay(3000).fadeOut(400, function(){
+            $(this).html('').removeClass('text-success');
+          });
+        }
+        else{
+          console.log('displaying msg');
+          $('#msgArea').addClass('text-danger').html(msg).show().delay(3000).fadeOut(400, function(){
+            $(this).html('').removeClass('text-danger');
+          });
+        }
+      }
+
+
+      clearPage();
+
+      var socket = io();
+
+      socket.on('connect', function(){
+        // We have connected over the socket, clear the page and request a full refresh
+        clearPage();
+        socket.emit('syncRequest');
+      });
+
+      socket.on('reconnecting', function(){
+        // Lost connection, show connecting spinner
+        $.isLoading( "hide" );
+        $.isLoading({ text: "Connecting to server &nbsp;" });
+      });
+
+      socket.on('syncResponce', function(teams){
+        clearPage();
+        processTeams(teams);
+        $.isLoading( "hide" );
+        displayMsg('Connected To Server', true);
+      });
+
+      socket.on('alert', function(alert){
+        displayMsg(alert, true);
+      });
+
+      socket.on('teamAdded', function(team){
+        processTeam(team);
+      });
+
+      socket.on('teamAddedSuccess', function(team){
+        processTeam(team);
+        displayMsg('Team Added', true);
+      });
+
+      socket.on('teamAddedFail', function(msg){
+        displayMsg('Failed to add team: ' + msg, false);
+      });
+
+      socket.on('patchCallFail', function(msg){
+        displayMsg('Failed to patch call: ' + msg, false);
+      });
+
+      socket.on('queryTeamSuccess', function(team){
+        console.log('got query reply')
+        $('#editTeamForm')[0].reset();
+        $('#editTeamForm input[name="teamName"]').val(team.teamName);
+        $('#editTeamForm input[name="pilotName"]').val(team.pilotName);
+        $('#editTeamForm input[name="tacticalName"]').val(team.tacticalName);
+        $('#editTeamForm input[name="engineerName"]').val(team.engineerName);
+        $('#editTeamForm input[name="contactNumber"]').val(team.contactNumber);
+        $('#editTeamForm input[name="contactEmail"]').val(team.contactEmail);
+        $('#editTeamForm').attr('rel', team._id);
+        $('#editModal').modal('show');
+      });
+
+      socket.on('teamRemoved', function(team){
+        removeTeam(team);
+      });
+
+      socket.on('teamRemovedSuccess', function(team){
+        removeTeam(team);
+        displayMsg('Team Removed', true);
+      });
+
+      socket.on('teamAddedRemovedFail', function(msg){
+        displayMsg('Failed to remove team: ' + msg, false);
+      });
+
+      socket.on('teamUpdated', function(team){
+        // This is horible, make a real update
+        console.log('got update');
+        console.log(findCurrentState(team));
+        clearPage();
+        socket.emit('syncRequest');
+      });
+
+      socket.on('teamUpdatedSuccess', function(team){
+        // This is still horrible
+        console.log('got update success');
+        var currentStatus = findCurrentState(team);
+        //console.log(currentStatus);
+        if(currentStatus!=team.status){
+          // Status has changed
+          console.log('status changed, removing and adding');
+          removeTeam(team);
+          processTeam(team);
+        }
+        else{
+          // Its the details of the team that have changed, update in place
+          // TODO Actually update in place
+          clearPage();
+          socket.emit('syncRequest');
+        }
+      });
+
+      socket.on('teamUpdatedFail', function(msg){
+        displayMsg('Failed to update team: ' + msg, false);
+      });
+
+      // Click handling
+      $('#addTeamForm').on('submit', function(event){
+        // Get a remove dropdown clicked, find what team for and request removal
+        //if ( event.target.checkValidity && ! event.target.checkValidity()) { return; }
+        event.preventDefault();
+        console.log('Adding Team');
+        socket.emit('addTeam', $('#addTeamForm').serializeJSON());
+        console.log($('#addTeamForm').serializeJSON());
+        $('#addTeamForm')[0].reset();
+        $('.nav-tabs li.active').removeClass('active');
+        $('#overviewTab').addClass('active');
+        $('.content.active').hide().removeClass('active');
+        $('#overview').show().addClass('active');
+      });
+
+
+
+      // Click handling
+      $('#cueRows').on('click', '.removeTeam', function(){
+        // Get a remove dropdown clicked, find what team for and request removal
+        socket.emit('removeTeam', { _id: $(this).attr('rel')});
+        console.log('removing team:' + $(this).attr('rel'));
+      });
+
+      $('#deadCueRows').on('click', '.removeDead', function(){
+        // Get a remove dropdown clicked, find what team for and request removal
+        socket.emit('removeTeam', { _id: $(this).attr('rel')});
+        console.log('removing team:' + $(this).attr('rel'));
+      });
+
+      // Click handling
+      $('#cueRows').on('click', '.editTeam', function(){
+        // Populate edit modal with the data and show it
+        console.log('got edit team');
+        socket.emit('queryTeam', { _id: $(this).attr('rel')});
+      });
+
+      $('#cueRows').on('click', '.briefBTN', function(){
+        // Got a brief button click, send an update request
+        socket.emit('updateTeam', { _id: $(this).attr('rel'), update: {status: 1}});
+        console.log('updating team: ' + $(this).attr('rel') + ' to status 1');
+      });
+
+      $('#cueRows').on('click', '.autoCall', function(){
+        // Got a brief button click, send an update request
+        socket.emit('autoCall', { _id: $(this).attr('rel') });
+        console.log('auto calling: ' + $(this).attr('rel'));
+      });
+
+      $('#cueRows').on('click', '.patchCall', function(){
+        // Got a brief button click, send an update request
+        socket.emit('patchCall', { _id: $(this).attr('rel') });
+        console.log('patching call: ' + $(this).attr('rel'));
+      });
+
+      $('.briefBTNCue').on('click', function(){
+        // Got a return to cue button for briefing room, send an update request
+        socket.emit('updateTeam', { _id: $(this).attr('rel'), update: {status: 0}});
+        console.log('updating team: ' + $(this).attr('rel') + ' to status 1');
+      });
+
+      $('.briefBTNEmbark').on('click', function(){
+        // Got a return to cue button for briefing room, send an update request
+        socket.emit('updateTeam', { _id: $(this).attr('rel'), update: {status: 2}});
+        console.log('updating team: ' + $(this).attr('rel') + ' to status 1');
+      });
+
+      $('.simBTNCue').on('click', function(){
+        // Got a return to cue button for the sim, send an update request
+        socket.emit('updateTeam', { _id: $(this).attr('rel'), update: {status: 0}});
+        console.log('updating team: ' + $(this).attr('rel') + ' to status 1');
+      });
+
+      $('.simBTNDisembark').on('click', function(){
+        // Got a force disembark request, send an update request
+        // TODO
+        //   Add pop up warning with input for death reason
+        $('#disembarkTeamForm').attr('rel', $(this).attr('rel'));
+        $('#disembarkModal').modal('show');
+      });
+
+
+
+      $('.welcomeScreen').on('click', function(){
+        // Got a return to cue button for the sim, send an update request
+        socket.emit('showWelcome');
+      });
+
+      $('.bookingFormScreen').on('click', function(){
+        // Got a return to cue button for the sim, send an update request
+        socket.emit('showBookingForm');
+      });
+
+      $('.closedScreen').on('click', function(){
+        // Got a return to cue button for the sim, send an update request
+        socket.emit('showClosed');
+      });
+
+      // Start info hidden
+      $('#briefDetails').hide();
+      $('#simDetails').hide();
+
+      $('.briefBTNView').on('click', function(){
+        // Show or hide the extended details
+        if($('#briefArrow').attr('class')=='glyphicon glyphicon-arrow-up'){
+          // Details currently shown, hide them
+          $('#briefArrow').removeClass('glyphicon-arrow-up').addClass('glyphicon-arrow-down');
+          $('#briefDetails').slideToggle(200);
+        }
+        else {
+          // Details currently hidden, show them
+          $('#briefArrow').removeClass('glyphicon-arrow-down').addClass('glyphicon-arrow-up');
+          $('#briefDetails').slideToggle(200);
+        }
+      });
+
+      $('.simBTNView').on('click', function(){
+        // Show or hide the extended details
+        if($('#simArrow').attr('class')=='glyphicon glyphicon-arrow-up'){
+          // Details currently shown, hide them
+          $('#simArrow').removeClass('glyphicon-arrow-up').addClass('glyphicon-arrow-down');
+          $('#simDetails').slideToggle(200);
+        }
+        else {
+          // Details currently hidden, show them
+          $('#simArrow').removeClass('glyphicon-arrow-down').addClass('glyphicon-arrow-up');
+          $('#simDetails').slideToggle(200);
+        }
+      });
+
+      $('#editTeamForm').on('submit', function(event){
+        // Update team
+        event.preventDefault();
+        socket.emit('updateTeam', { _id: $(this).attr('rel') , update: $('#editTeamForm').serializeJSON()});
+        $('#editTeamForm')[0].reset();
+        $('.saveChanges').attr('rel', '');
+        $('#editModal').modal('hide');
+      });
+
+      $('#disembarkTeamForm').on('submit', function(event){
+        // Update team
+        event.preventDefault();
+        socket.emit('updateTeam', { _id: $(this).attr('rel'), update: {status: 3, deathReason: $('#deathReasonInput').val() }});
+        //console.log($('#deathReasonInput').val());
+        $('#disembarkTeamForm')[0].reset();
+        $('#disembarkTeamForm').attr('rel', '');
+        $('#disembarkModal').modal('hide');
+      });
+
+      $(document).keyup(function(e) {
+        if (e.keyCode == 27) { 
+          // Close all modals
+          $('.modal').modal('hide');
+        }   // esc
+      });
+    });
+    </script>
   </body>
 </html>
